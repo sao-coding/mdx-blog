@@ -1,62 +1,67 @@
-"use client";
+'use client'
 
-import type React from "react";
-import { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import type React from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 import {
   motion as m,
   LayoutGroup,
   useMotionTemplate,
   useMotionValue,
   AnimatePresence,
-} from "motion/react";
-import { NAV_LINKS } from "@/config/menu";
-import { cn } from "@/lib/utils";
-import { Icon } from "@tabler/icons-react";
+} from 'motion/react'
+import { NAV_LINKS } from '@/config/menu'
+import { cn } from '@/lib/utils'
+import { Icon } from '@tabler/icons-react'
 
 interface AnimatedHeaderProps {
-  iconLayout?: boolean;
-  className?: string;
+  iconLayout?: boolean
+  className?: string
+  variant?: 'default' | 'integrated'
 }
 
-const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
-  const pathname = usePathname();
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+const Nav = ({
+  iconLayout = true,
+  className,
+  variant = 'default',
+}: AnimatedHeaderProps) => {
+  const pathname = usePathname()
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null)
 
-  const navRef = useRef<HTMLElement>(null);
-  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const navRef = useRef<HTMLElement>(null)
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // 滑鼠位置追蹤
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const entryX = useMotionValue(0);
-  const entryY = useMotionValue(0);
-  const radius = useMotionValue(0);
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const entryX = useMotionValue(0)
+  const entryY = useMotionValue(0)
+  const radius = useMotionValue(0)
 
   // 處理導航項目顯示邏輯
   const getNavItemsToShow = () => {
     const itemsToShow: Array<{
-      icon?: Icon;
-      href?: string;
-      text: string;
-      isChild: boolean;
-      parentIcon?: Icon;
-      childHref?: string;
-      hasChildren: boolean;
+      icon?: Icon
+      href?: string
+      text: string
+      isChild: boolean
+      parentIcon?: Icon
+      childHref?: string
+      hasChildren: boolean
       // 添加一個穩定的 key 來避免動畫重新觸發
-      stableKey: string;
+      stableKey: string
       // 添加 parentIndex 來幫助查找原始項目
-      parentIndex: number;
-    }> = [];
+      parentIndex: number
+    }> = []
 
     NAV_LINKS.forEach((link, index) => {
       // 檢查是否有子項目被激活且需要顯示
       const activeChild = link.children?.find(
         (child) => child.show && pathname === child.href
-      );
+      )
 
       if (activeChild) {
         // 如果有激活的子項目，顯示子項目
@@ -71,7 +76,7 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
           // 使用父項目的 index 作為穩定的 key
           stableKey: `parent-${index}`,
           parentIndex: index,
-        });
+        })
       } else {
         // 否則顯示父項目
         itemsToShow.push({
@@ -83,106 +88,109 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
           // 使用自身的 href 或 index 作為穩定的 key
           stableKey: link.href || `parent-${index}`,
           parentIndex: index,
-        });
+        })
       }
-    });
+    })
 
-    return itemsToShow;
-  };
+    return itemsToShow
+  }
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReducedMotion(mediaQuery.matches)
 
     const handleChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
-    };
+      setPrefersReducedMotion(e.matches)
+    }
 
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
 
   // 清理 timeout
   useEffect(() => {
     return () => {
       if (dropdownTimeoutRef.current) {
-        clearTimeout(dropdownTimeoutRef.current);
+        clearTimeout(dropdownTimeoutRef.current)
       }
-    };
-  }, []);
+    }
+  }, [])
 
-  const shouldAnimate = iconLayout && !prefersReducedMotion;
+  const shouldAnimate = iconLayout && !prefersReducedMotion
 
-  const spotlightBackground = useMotionTemplate`radial-gradient(ellipse 200px 100px at ${mouseX}px ${mouseY}px, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.08) 40%, transparent 70%)`;
+  const spotlightBackground = useMotionTemplate`radial-gradient(ellipse 200px 100px at ${mouseX}px ${mouseY}px, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.08) 40%, transparent 70%)`
 
   // 處理滑鼠移動事件
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (!shouldAnimate) return;
+    if (!shouldAnimate) return
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
 
-    mouseX.set(x);
-    mouseY.set(y);
-    radius.set(Math.hypot(rect.width, rect.height) / 2.5);
-  };
+    mouseX.set(x)
+    mouseY.set(y)
+    radius.set(Math.hypot(rect.width, rect.height) / 2.5)
+  }
 
   // 處理滑鼠進入事件
   const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
-    if (!shouldAnimate) return;
+    if (!shouldAnimate) return
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
 
-    entryX.set(x);
-    entryY.set(y);
-    mouseX.set(x);
-    mouseY.set(y);
-    radius.set(Math.hypot(rect.width, rect.height) / 2);
-  };
+    entryX.set(x)
+    entryY.set(y)
+    mouseX.set(x)
+    mouseY.set(y)
+    radius.set(Math.hypot(rect.width, rect.height) / 2)
+  }
 
   // 下拉選單處理邏輯
   const handleNavItemMouseEnter = (linkKey: string, hasChildren: boolean) => {
     if (dropdownTimeoutRef.current) {
-      clearTimeout(dropdownTimeoutRef.current);
-      dropdownTimeoutRef.current = null;
+      clearTimeout(dropdownTimeoutRef.current)
+      dropdownTimeoutRef.current = null
     }
 
-    setHoveredItem(linkKey);
+    setHoveredItem(linkKey)
 
     if (hasChildren) {
-      setOpenDropdown(linkKey);
+      setOpenDropdown(linkKey)
     } else {
-      setOpenDropdown(null);
+      setOpenDropdown(null)
     }
-  };
+  }
 
   const handleNavItemMouseLeave = () => {
     dropdownTimeoutRef.current = setTimeout(() => {
-      setHoveredItem(null);
-      setOpenDropdown(null);
-    }, 100);
-  };
+      setHoveredItem(null)
+      setOpenDropdown(null)
+    }, 100)
+  }
 
   const handleDropdownMouseEnter = () => {
     if (dropdownTimeoutRef.current) {
-      clearTimeout(dropdownTimeoutRef.current);
-      dropdownTimeoutRef.current = null;
+      clearTimeout(dropdownTimeoutRef.current)
+      dropdownTimeoutRef.current = null
     }
-  };
+  }
 
   const handleDropdownMouseLeave = () => {
-    setHoveredItem(null);
-    setOpenDropdown(null);
-  };
+    setHoveredItem(null)
+    setOpenDropdown(null)
+  }
 
   return (
     <nav
       ref={navRef}
       className={cn(
-        "relative mx-auto h-9 max-w-fit items-center justify-between rounded-full bg-gray-900/95 backdrop-blur-md border border-gray-700/50 px-4 md:flex shadow-lg overflow-visible group",
+        'relative mx-auto h-9 max-w-fit items-center justify-between rounded-full border px-4 md:flex overflow-visible group transition-all duration-100',
+        variant === 'integrated'
+          ? 'bg-transparent border-transparent shadow-none'
+          : 'bg-gray-900/95 backdrop-blur-md border-gray-700/50 shadow-lg',
         className
       )}
       onMouseMove={handleMouseMove}
@@ -199,12 +207,12 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
           {getNavItemsToShow().map((item) => {
             const isActive = item.isChild
               ? pathname === item.childHref
-              : item.href && pathname === item.href;
+              : item.href && pathname === item.href
 
             // 使用 parentIndex 來正確查找原始項目
-            const originalLink = NAV_LINKS[item.parentIndex];
-            const isDropdownOpen = openDropdown === item.stableKey;
-            const isHovered = hoveredItem === item.stableKey;
+            const originalLink = NAV_LINKS[item.parentIndex]
+            const isDropdownOpen = openDropdown === item.stableKey
+            const isHovered = hoveredItem === item.stableKey
 
             // 如果沒有 href，渲染為 button 而不是 Link
             const content = (
@@ -217,12 +225,12 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                       layoutId="header-menu-icon"
                       className="flex items-center justify-center w-5 relative"
                       transition={{
-                        type: "spring",
+                        type: 'spring',
                         stiffness: 350,
                         damping: 28,
                         mass: 0.6,
                       }}
-                      style={{ willChange: "transform" }}
+                      style={{ willChange: 'transform' }}
                       aria-hidden="true"
                     >
                       <AnimatePresence mode="wait">
@@ -235,7 +243,7 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                           exit={{ opacity: 0, scale: 0.5, rotate: 180 }}
                           transition={{
                             duration: 0.3,
-                            ease: "easeInOut",
+                            ease: 'easeInOut',
                           }}
                           className="absolute inset-0 flex items-center justify-center"
                         >
@@ -256,14 +264,14 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                     key={`text-${item.stableKey}-${item.isChild}`}
                     layout={shouldAnimate}
                     transition={{
-                      type: "spring",
+                      type: 'spring',
                       stiffness: 350,
                       damping: 28,
                       mass: 0.6,
                     }}
                     className={cn(
-                      "text-sm font-medium whitespace-nowrap hover:text-teal-400",
-                      isActive ? "text-teal-400" : "text-gray-300"
+                      'text-sm font-medium whitespace-nowrap hover:text-teal-400',
+                      isActive ? 'text-teal-400' : 'text-gray-300'
                     )}
                   >
                     {item.text}
@@ -276,12 +284,12 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                     layoutId="active-nav-underline"
                     className="absolute inset-x-0 bottom-px h-px bg-gradient-to-r from-transparent via-teal-400 to-transparent pointer-events-none rounded-full"
                     transition={{
-                      type: "spring",
+                      type: 'spring',
                       stiffness: 350,
                       damping: 28,
                       mass: 0.6,
                     }}
-                    style={{ willChange: "transform" }}
+                    style={{ willChange: 'transform' }}
                     aria-hidden="true"
                   />
                 )}
@@ -289,24 +297,24 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                 {!shouldAnimate && (
                   <span
                     className={cn(
-                      "absolute inset-x-0 bottom-px h-0.5 pointer-events-none rounded-full transition-all duration-300 ease-out",
-                      "bg-gradient-to-r from-transparent via-teal-400 to-transparent",
+                      'absolute inset-x-0 bottom-px h-0.5 pointer-events-none rounded-full transition-all duration-300 ease-out',
+                      'bg-gradient-to-r from-transparent via-teal-400 to-transparent',
                       isActive
-                        ? "opacity-100 scale-x-100"
-                        : "opacity-0 scale-x-0"
+                        ? 'opacity-100 scale-x-100'
+                        : 'opacity-0 scale-x-0'
                     )}
                     aria-hidden="true"
                   />
                 )}
               </>
-            );
+            )
 
             return (
               <m.div
                 key={item.stableKey}
                 layout={shouldAnimate}
                 transition={{
-                  type: "spring",
+                  type: 'spring',
                   stiffness: 400,
                   damping: 30,
                   mass: 0.8,
@@ -321,11 +329,11 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                   <Link
                     href={item.href}
                     title={item.text}
-                    aria-current={isActive ? "page" : undefined}
+                    aria-current={isActive ? 'page' : undefined}
                     className={cn(
-                      "relative flex items-center justify-center rounded-full px-4 py-2 transition-all duration-200 group/item",
-                      "focus-visible:outline-0",
-                      isHovered && "text-teal-300"
+                      'relative flex items-center justify-center rounded-full px-4 py-2 transition-all duration-200 group/item',
+                      'focus-visible:outline-0',
+                      isHovered && 'text-teal-300'
                     )}
                   >
                     {content}
@@ -335,10 +343,10 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                     type="button"
                     title={item.text}
                     className={cn(
-                      "relative flex items-center justify-center rounded-full px-4 py-2 transition-all duration-200 group/item cursor-pointer",
-                      "text-gray-300",
-                      "focus-visible:outline-0",
-                      isHovered && "text-teal-300"
+                      'relative flex items-center justify-center rounded-full px-4 py-2 transition-all duration-200 group/item cursor-pointer',
+                      'text-gray-300',
+                      'focus-visible:outline-0',
+                      isHovered && 'text-teal-300'
                     )}
                   >
                     {content}
@@ -354,7 +362,7 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{
-                          type: "spring",
+                          type: 'spring',
                           stiffness: 500,
                           damping: 25,
                           mass: 0.8,
@@ -387,12 +395,12 @@ const Nav = ({ iconLayout = true, className }: AnimatedHeaderProps) => {
                   </AnimatePresence>
                 )}
               </m.div>
-            );
+            )
           })}
         </nav>
       </LayoutGroup>
     </nav>
-  );
-};
+  )
+}
 
-export default Nav;
+export default Nav
