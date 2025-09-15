@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Lint Workspace",
+      "type": "shell",
+      "command": "pnpm lint",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": {
+        "reveal": "always",
+        "revealProblems": "onProblem" // 或 "always" 看你要不要每次都彈出
+      }
+    }
+  ]
+}
