@@ -31,8 +31,8 @@ export const NAV_LINKS: NavLinks = [
   },
   {
     icon: IconSignature,
-    href: '/blog',
-    text: '部落格',
+    href: '/posts',
+    text: '文章',
     children: [
       {
         icon: IconPencil,
