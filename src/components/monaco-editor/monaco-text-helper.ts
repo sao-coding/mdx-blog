@@ -1,11 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { editor } from 'monaco-editor'
 import { TEXT_ACTIONS, TextAction } from './types'
 
 export class MonacoTextHelper {
-  constructor(private editor: any) {}
+  constructor(private editor: editor.IStandaloneCodeEditor) {}
 
   /**
-   * 檢查文字是否已經被指定的標記包圍
+   * 檢查文字是否已經被指定的標記包圍。
+   * @param text - 要檢查的文字。
+   * @param before - 前標記。
+   * @param after - 後標記，如果未提供則使用前標記。
+   * @returns - 如果文字被包圍則返回 true，否則返回 false。
    */
   private isTextWrapped(text: string, before: string, after?: string): boolean {
     const afterMark = after || before
@@ -13,7 +17,11 @@ export class MonacoTextHelper {
   }
 
   /**
-   * 移除文字周圍的標記
+   * 移除文字周圍的標記。
+   * @param text - 要處理的文字。
+   * @param before - 前標記。
+   * @param after - 後標記，如果未提供則使用前標記。
+   * @returns - 移除標記後的文字。
    */
   private unwrapText(text: string, before: string, after?: string): string {
     const afterMark = after || before
@@ -24,14 +32,17 @@ export class MonacoTextHelper {
   }
 
   /**
-   * 切換選中文字的指定標記
+   * 切換選中文字的指定標記。
+   * @param action - 要執行的文字操作。
    */
   private toggleTextWrapping(action: TextAction): void {
-    if (!this.editor) return
-
     const selection = this.editor.getSelection()
-    const selectedText =
-      this.editor.getModel()?.getValueInRange(selection) || ''
+    if (!selection) return
+
+    const model = this.editor.getModel()
+    if (!model) return
+
+    const selectedText = model.getValueInRange(selection) || ''
 
     let newText: string
     let newSelectionLength: number
@@ -57,10 +68,11 @@ export class MonacoTextHelper {
     }
 
     // 執行編輯操作
-    this.editor.executeEdits('', [
+    this.editor.executeEdits('text-helper', [
       {
         range: selection,
         text: newText,
+        forceMoveMarkers: true,
       },
     ])
 
@@ -98,46 +110,46 @@ export class MonacoTextHelper {
   }
 
   /**
-   * 切換粗體格式
+   * 切換粗體格式。
    */
   applyBold(): void {
     this.toggleTextWrapping(TEXT_ACTIONS.bold)
   }
 
   /**
-   * 切換斜體格式
+   * 切換斜體格式。
    */
   applyItalic(): void {
     this.toggleTextWrapping(TEXT_ACTIONS.italic)
   }
 
   /**
-   * 切換連結格式
+   * 插入連結格式。
    */
   insertLink(): void {
     this.toggleTextWrapping(TEXT_ACTIONS.link)
   }
 
   /**
-   * 切換圖片格式
+   * 插入圖片格式。
    */
   insertImage(): void {
     this.toggleTextWrapping(TEXT_ACTIONS.image)
   }
 
   /**
-   * 取得目前編輯器的值
+   * 取得目前編輯器的值。
+   * @returns - 編輯器的目前內容。
    */
   getValue(): string {
-    return this.editor?.getValue() || ''
+    return this.editor.getValue() || ''
   }
 
   /**
-   * 設置編輯器的值
+   * 設置編輯器的值。
+   * @param value - 要設定的內容。
    */
   setValue(value: string): void {
-    if (this.editor) {
-      this.editor.setValue(value)
-    }
+    this.editor.setValue(value)
   }
 }

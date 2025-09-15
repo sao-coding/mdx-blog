@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useRef, useCallback, useState, useEffect } from 'react'
 import Editor from '@monaco-editor/react'
+import type { editor, IDisposable } from 'monaco-editor'
 import { MonacoToolbar } from './monaco-toolbar'
 import { useMonacoShortcuts } from './monaco-shortcuts'
 import { MonacoTextHelper } from './monaco-text-helper'
@@ -16,10 +16,10 @@ export default function MonacoEditor({
   onSave,
   showToolbar = true,
 }: MonacoEditorProps) {
-  const editorRef = useRef<any>(null)
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
   const textHelperRef = useRef<MonacoTextHelper | null>(null)
   const [isEditorReady, setIsEditorReady] = useState(false)
-  const disposablesRef = useRef<any[]>([])
+  const disposablesRef = useRef<IDisposable[]>([])
 
   // stats
   const [totalWords, setTotalWords] = useState(0)
@@ -30,125 +30,147 @@ export default function MonacoEditor({
   const [selChars, setSelChars] = useState(0)
   const [selLines, setSelLines] = useState(0)
 
-  const handleEditorDidMount = useCallback((editor: any) => {
-    editorRef.current = editor
-    textHelperRef.current = new MonacoTextHelper(editor)
-    setIsEditorReady(true)
+  /**
+   * 編輯器掛載完成時的回調函式。
+   * @param editor - Monaco 編輯器實例。
+   */
+  const handleEditorDidMount = useCallback(
+    (editor: editor.IStandaloneCodeEditor) => {
+      editorRef.current = editor
+      textHelperRef.current = new MonacoTextHelper(editor)
+      setIsEditorReady(true)
 
-    // helper: count graphemes (user-perceived characters)
-    const countGraphemes = (text: string): number => {
-      if (!text) return 0
-      const normalized = text.replace(/\r\n/g, '\n') // 統一換行
-      const Seg = (Intl as any).Segmenter
-      if (Seg) {
-        try {
-          const seg = new Seg(undefined, { granularity: 'grapheme' })
-          let count = 0
-          for (const _ of seg.segment(normalized)) count++
-          return count
-        } catch (e) {
-          // fallback if Segmenter fails
-        }
-      }
-      // fallback: code points (better than .length for emoji/unicode)
-      return Array.from(normalized).length
-    }
-
-    // helper: smart word count for CJK + other languages
-    const countWords = (text: string): number => {
-      if (!text) return 0
-
-      // If text contains CJK scripts, count those characters individually.
-      const hasCJK =
-        /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(text)
-      if (hasCJK) {
-        const hanMatches = text.match(/\p{Script=Han}/gu) || []
-        const hiraganaMatches = text.match(/\p{Script=Hiragana}/gu) || []
-        const katakanaMatches = text.match(/\p{Script=Katakana}/gu) || []
-
-        const withoutCJK = text
-          .replace(/\p{Script=Han}/gu, ' ')
-          .replace(/\p{Script=Hiragana}/gu, ' ')
-          .replace(/\p{Script=Katakana}/gu, ' ')
-        const otherWordsMatches = withoutCJK.match(/\p{L}+/gu) || []
-
-        return (
-          hanMatches.length +
-          hiraganaMatches.length +
-          katakanaMatches.length +
-          otherWordsMatches.length
-        )
-      }
-
-      // Non-CJK: prefer Intl.Segmenter word segmentation
-      const Seg = (Intl as any).Segmenter
-      if (Seg) {
-        try {
-          const seg = new Seg(undefined, { granularity: 'word' })
-          let count = 0
-          for (const segment of seg.segment(text) as any) {
-            if (segment.isWordLike) count++
+      /**
+       * 計算字形數量（使用者感知的字元）。
+       * @param text - 要計算的文字。
+       * @returns - 字形數量。
+       */
+      const countGraphemes = (text: string): number => {
+        if (!text) return 0
+        const normalized = text.replace(/\r\n/g, '\n') // 統一換行
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const Seg = (Intl as any).Segmenter
+        if (Seg) {
+          try {
+            const seg = new Seg(undefined, { granularity: 'grapheme' })
+            let count = 0
+            for (const _ of seg.segment(normalized)) count++
+            return count
+          } catch (e) {
+            // fallback if Segmenter fails
           }
-          if (count > 0) return count
+        }
+        // fallback: code points (better than .length for emoji/unicode)
+        return Array.from(normalized).length
+      }
+
+      /**
+       * 智慧計算單字數量，支援 CJK 字元。
+       * @param text - 要計算的文字。
+       * @returns - 單字數量。
+       */
+      const countWords = (text: string): number => {
+        if (!text) return 0
+
+        const hasCJK =
+          /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(text)
+        if (hasCJK) {
+          const hanMatches = text.match(/\p{Script=Han}/gu) || []
+          const hiraganaMatches = text.match(/\p{Script=Hiragana}/gu) || []
+          const katakanaMatches = text.match(/\p{Script=Katakana}/gu) || []
+
+          const withoutCJK = text
+            .replace(/\p{Script=Han}/gu, ' ')
+            .replace(/\p{Script=Hiragana}/gu, ' ')
+            .replace(/\p{Script=Katakana}/gu, ' ')
+          const otherWordsMatches = withoutCJK.match(/\p{L}+/gu) || []
+
+          return (
+            hanMatches.length +
+            hiraganaMatches.length +
+            katakanaMatches.length +
+            otherWordsMatches.length
+          )
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const Seg = (Intl as any).Segmenter
+        if (Seg) {
+          try {
+            const seg = new Seg(undefined, { granularity: 'word' })
+            let count = 0
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            for (const segment of seg.segment(text) as any) {
+              if (segment.isWordLike) count++
+            }
+            if (count > 0) return count
+          } catch (e) {
+            // fallback
+          }
+        }
+
+        const other = text.match(/\p{L}+/gu) || []
+        return other.length
+      }
+
+      /**
+       * 更新所有統計數據（總字數、總字元、總行數）。
+       */
+      const updateAllStats = () => {
+        try {
+          const model = editor.getModel()
+          if (!model) return
+          const value = model.getValue()
+          setTotalChars(countGraphemes(value))
+          setTotalLines(model.getLineCount())
+          setTotalWords(countWords(value))
         } catch (e) {
-          // fallback
+          // ignore
         }
       }
 
-      // fallback for other languages
-      const other = text.match(/\p{L}+/gu) || []
-      return other.length
-    }
+      /**
+       * 更新選取範圍的統計數據。
+       */
+      const updateSelectionStats = () => {
+        try {
+          const selection = editor.getSelection()
+          const model = editor.getModel()
+          if (!model || !selection) {
+            setSelChars(0)
+            setSelLines(0)
+            setSelWords(0)
+            return
+          }
 
-    const updateAllStats = () => {
-      try {
-        const model = editor.getModel()
-        if (!model) return
-        const value = model.getValue()
-        setTotalChars(countGraphemes(value))
-        setTotalLines(model.getLineCount())
-        setTotalWords(countWords(value))
-      } catch (e) {
-        // ignore
-      }
-    }
-
-    const updateSelectionStats = () => {
-      try {
-        const selection = editor.getSelection()
-        const model = editor.getModel()
-        if (!model || !selection) {
-          setSelChars(0)
-          setSelLines(0)
-          setSelWords(0)
-          return
+          const selectedText = model.getValueInRange(selection) || ''
+          setSelChars(countGraphemes(selectedText))
+          setSelLines(
+            selectedText ? selectedText.split(/\r\n|\r|\n/).length : 0
+          )
+          setSelWords(countWords(selectedText))
+        } catch (e) {
+          // ignore
         }
-
-        const selectedText = model.getValueInRange(selection) || ''
-        setSelChars(countGraphemes(selectedText))
-        setSelLines(selectedText ? selectedText.split(/\r\n|\r|\n/).length : 0)
-        setSelWords(countWords(selectedText))
-      } catch (e) {
-        // ignore
       }
-    }
 
-    // initial
-    updateAllStats()
-    updateSelectionStats()
-
-    // subscribe
-    const contentDisposable = editor.onDidChangeModelContent(() => {
+      // initial
       updateAllStats()
       updateSelectionStats()
-    })
 
-    const selectionDisposable = editor.onDidChangeCursorSelection(() => {
-      updateSelectionStats()
-    })
+      // subscribe
+      const contentDisposable = editor.onDidChangeModelContent(() => {
+        updateAllStats()
+        updateSelectionStats()
+      })
 
-    disposablesRef.current.push(contentDisposable, selectionDisposable)
-  }, [])
+      const selectionDisposable = editor.onDidChangeCursorSelection(() => {
+        updateSelectionStats()
+      })
+
+      disposablesRef.current.push(contentDisposable, selectionDisposable)
+    },
+    []
+  )
 
   // 清理工作
   useEffect(() => {
@@ -164,53 +186,55 @@ export default function MonacoEditor({
     }
   }, [])
 
+  /**
+   * 處理粗體格式切換。
+   */
   const handleBold = useCallback(() => {
     textHelperRef.current?.applyBold()
   }, [])
 
+  /**
+   * 處理斜體格式切換。
+   */
   const handleItalic = useCallback(() => {
     textHelperRef.current?.applyItalic()
   }, [])
 
+  /**
+   * 處理連結格式插入。
+   */
   const handleLink = useCallback(() => {
     textHelperRef.current?.insertLink()
   }, [])
 
+  /**
+   * 處理圖片格式插入。
+   */
   const handleImage = useCallback(() => {
     textHelperRef.current?.insertImage()
   }, [])
 
+  /**
+   * 處理儲存動作。
+   */
   const handleSave = useCallback(() => {
     if (onSave) {
       onSave()
     }
   }, [onSave])
 
+  /**
+   * 處理復原動作。
+   */
   const handleUndo = useCallback(() => {
-    try {
-      editorRef.current?.getModel() &&
-        editorRef.current?.trigger('keyboard', 'undo', null)
-    } catch (e) {
-      // fallback using editor API
-      try {
-        editorRef.current?.undo && editorRef.current.undo()
-      } catch (err) {
-        // no-op
-      }
-    }
+    editorRef.current?.trigger('app', 'undo', null)
   }, [])
 
+  /**
+   * 處理取消復原動作。
+   */
   const handleRedo = useCallback(() => {
-    try {
-      editorRef.current?.getModel() &&
-        editorRef.current?.trigger('keyboard', 'redo', null)
-    } catch (e) {
-      try {
-        editorRef.current?.redo && editorRef.current.redo()
-      } catch (err) {
-        // no-op
-      }
-    }
+    editorRef.current?.trigger('app', 'redo', null)
   }, [])
 
   // 註冊快捷鍵
@@ -224,7 +248,7 @@ export default function MonacoEditor({
     onRedo: handleRedo,
   })
 
-  const defaultOptions = {
+  const defaultOptions: editor.IStandaloneEditorConstructionOptions = {
     fontSize: 14,
     lineNumbers: 'on',
     roundedSelection: false,

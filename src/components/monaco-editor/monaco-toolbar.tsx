@@ -1,6 +1,6 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import React from 'react'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import {
   Bold,
   Italic,
@@ -8,9 +8,14 @@ import {
   Image,
   CornerUpLeft,
   CornerUpRight,
-} from "lucide-react";
-import { MonacoToolbarProps } from "./types";
+} from 'lucide-react'
+import { MonacoToolbarProps } from './types'
 
+/**
+ * 用於 Monaco 編輯器的工具列元件。
+ * 提供常用 Markdown 格式的按鈕，如粗體、斜體、連結、復原和取消復原。
+ * @param props - 工具列的屬性，包含各種操作的回調函式和禁用狀態。
+ */
 export function MonacoToolbar({
   onBold,
   onItalic,
@@ -18,7 +23,6 @@ export function MonacoToolbar({
   onImage,
   onUndo,
   onRedo,
-  onSave,
   disabled = false,
 }: MonacoToolbarProps) {
   return (
@@ -102,5 +106,5 @@ export function MonacoToolbar({
 
       {/* Save button intentionally removed - use keyboard shortcut or external save UI */}
     </div>
-  );
+  )
 }

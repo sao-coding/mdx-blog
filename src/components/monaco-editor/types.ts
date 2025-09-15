@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import type { editor } from 'monaco-editor'
+
 export interface MonacoEditorProps {
   value: string
   onChange: (value: string | undefined) => void
   language?: string
   theme?: string
   height?: string
-  options?: any
+  options?: editor.IStandaloneEditorConstructionOptions
   onSave?: () => void
   showToolbar?: boolean
 }
@@ -22,14 +23,13 @@ export interface MonacoToolbarProps {
 }
 
 export interface MonacoShortcutsProps {
-  editor: any
+  editor: editor.IStandaloneCodeEditor | null
   onBold: () => void
   onItalic: () => void
   onLink: () => void
   onImage: () => void
   onUndo?: () => void
   onRedo?: () => void
-  onSave?: () => void
 }
 
 export interface TextAction {
