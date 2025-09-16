@@ -52,11 +52,11 @@ const WS_URL = `${process.env.NEXT_PUBLIC_WS_URL}/public/devices/ws`
 const MAX_RECONNECT_ATTEMPTS = 6
 const BASE_DELAY_MS = 800
 
-const SOFT_BOUNCE_PRESET: SpringTransition = {
+const SUPER_BOUNCY_SPRING: SpringTransition = {
   type: 'spring',
-  stiffness: 300,
-  damping: 28,
-  mass: 0.9,
+  stiffness: 200,
+  damping: 12,
+  mass: 1,
 }
 
 const MUSIC_ICONS = {
@@ -420,37 +420,42 @@ export default function DevicesStatus() {
   const renderContent = () => {
     if (displayMode === 'window' && windowInfo) {
       return (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <motion.div
-              key={`window-${windowInfo.process ?? 'unknown'}-${
-                windowInfo.title ?? ''
-              }`}
-              initial={{ opacity: 0.0001, y: 15 }}
-              animate={{ opacity: 1, x: 0, y: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              transition={SOFT_BOUNCE_PRESET}
-              style={{
-                position: 'absolute',
-                overflow: 'hidden',
-                pointerEvents: 'auto',
-              }}
-              className="flex items-center justify-center size-10"
-            >
-              <AppIcon
-                windowInfo={windowInfo}
-                appIcons={appIcons}
+        <motion.div
+          key={`window-${windowInfo.process ?? 'unknown'}-${
+            windowInfo.title ?? ''
+          }`}
+          initial={{ opacity: 0.0001, y: 25 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          exit={{
+            opacity: 0,
+            x: -5,
+            transition: { type: 'tween', duration: 0.1, ease: 'easeInOut' },
+          }}
+          transition={SUPER_BOUNCY_SPRING}
+          style={{
+            position: 'absolute',
+            overflow: 'hidden',
+            pointerEvents: 'auto',
+          }}
+        >
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center justify-center size-10">
+                <AppIcon
+                  windowInfo={windowInfo}
+                  appIcons={appIcons}
+                  appDescriptions={appDescriptions}
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-xs">
+              <WindowTooltipContent
+                info={windowInfo}
                 appDescriptions={appDescriptions}
               />
-            </motion.div>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="max-w-xs">
-            <WindowTooltipContent
-              info={windowInfo}
-              appDescriptions={appDescriptions}
-            />
-          </TooltipContent>
-        </Tooltip>
+            </TooltipContent>
+          </Tooltip>
+        </motion.div>
       )
     }
 
@@ -461,38 +466,43 @@ export default function DevicesStatus() {
         : `music-empty-${musicInfo.time ?? 'no-time'}`
 
       return (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <motion.div
-              key={key}
-              initial={{ opacity: 0.0001, y: 15 }}
-              animate={{ opacity: 1, x: 0, y: 0 }}
-              exit={{ opacity: 0, x: isActive ? -10 : 0 }}
-              transition={isActive ? SOFT_BOUNCE_PRESET : { duration: 0.12 }}
-              style={{
-                position: 'absolute',
-                overflow: 'hidden',
-                pointerEvents: 'auto',
-              }}
-              className="flex items-center justify-center size-10"
-            >
-              <MusicIcon musicInfo={musicInfo} />
-            </motion.div>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="max-w-xs">
-            <MusicTooltipContent info={musicInfo} isActive={isActive} />
-          </TooltipContent>
-        </Tooltip>
+        <motion.div
+          key={key}
+          initial={{ opacity: 0.0001, y: 25 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          exit={{
+            opacity: 0,
+            x: -5,
+            transition: { type: 'tween', duration: 0.1, ease: 'easeInOut' },
+          }}
+          transition={SUPER_BOUNCY_SPRING}
+          style={{
+            position: 'absolute',
+            overflow: 'hidden',
+            pointerEvents: 'auto',
+          }}
+        >
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center justify-center size-10">
+                <MusicIcon musicInfo={musicInfo} />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-xs">
+              <MusicTooltipContent info={musicInfo} isActive={isActive} />
+            </TooltipContent>
+          </Tooltip>
+        </motion.div>
       )
     }
 
     return (
       <motion.div
         key="empty"
-        initial={{ opacity: 0.0001, y: 15 }}
+        initial={{ opacity: 0.0001, y: 25 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.12 }}
+        transition={SUPER_BOUNCY_SPRING}
         style={{
           position: 'absolute',
           overflow: 'hidden',
