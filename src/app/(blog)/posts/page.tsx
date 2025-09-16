@@ -1,41 +1,90 @@
-"use client";
+'use client'
 
-import { ApiResponse } from "@/types/api";
-import { PostItem } from "@/types/post";
-import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
+import { ApiResponse } from '@/types/api'
+import { PostItem as PostType } from '@/types/post'
+import { useQuery } from '@tanstack/react-query'
+import { PostItem } from './_components/post-item'
+import { useState } from 'react'
+
+const SkeletonCard = () => (
+  <div className="animate-pulse rounded-lg border bg-surface-50 p-6 shadow-sm">
+    <div className="h-6 w-3/4 rounded bg-gray-200"></div>
+    <div className="mt-4 h-3 w-1/2 rounded bg-gray-200"></div>
+    <div className="mt-6 flex gap-3">
+      <div className="h-8 w-20 rounded bg-gray-200"></div>
+      <div className="h-8 w-12 rounded bg-gray-200"></div>
+    </div>
+  </div>
+)
 
 const PostsPage = () => {
-  const { data, error, isLoading } = useQuery<ApiResponse<PostItem[]>>({
-    queryKey: ["posts"],
-    queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/public/posts`
-      );
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return res.json();
-    },
-  });
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading posts</div>;
+  const [staleKey, setStaleKey] = useState(0)
+  const { data, error, isLoading, refetch } = useQuery<ApiResponse<PostType[]>>(
+    {
+      queryKey: ['posts', staleKey],
+      queryFn: async () => {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/public/posts`
+        )
+        if (!res.ok) {
+          throw new Error('Network response was not ok')
+        }
+        return res.json()
+      },
+    }
+  )
 
   return (
     <div className="mt-20">
-      <h1>Posts</h1>
-      <ul>
-        {data?.data.map((post) => (
-          <li key={post.id}>
-            <Link href={`/posts/${post.slug}`} className="hover:underline">
-              {post.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
+      <div className="mx-auto mt-14 max-w-5xl px-6 lg:mt-[80px] lg:px-0 2xl:max-w-6xl">
+        <header className="prose mb-8 max-w-none">
+          <h1 className="text-3xl font-extrabold">最新文章</h1>
+          <p className="mt-2 text-muted-foreground">
+            瀏覽我們的技術與心得分享。按文章卡片查看詳情。
+          </p>
+        </header>
 
-export default PostsPage;
+        {isLoading && (
+          <div className="flex flex-col gap-6">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-center justify-between rounded-lg border bg-red-50 p-4">
+            <div>
+              <p className="font-medium text-red-700">載入文章失敗</p>
+              <p className="text-sm text-red-600">請檢查網路或稍後再試。</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white hover:opacity-95"
+                onClick={() => {
+                  // 重新嘗試並更新 key 以強制 refetch cache
+                  setStaleKey((k) => k + 1)
+                  void refetch()
+                }}
+              >
+                重試
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!isLoading && !error && (
+          <ul className="flex flex-col">
+            {data?.data.map((post) => (
+              <li key={post.id}>
+                <PostItem post={post} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default PostsPage
