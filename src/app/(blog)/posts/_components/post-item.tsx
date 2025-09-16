@@ -95,7 +95,21 @@ const PostItem = ({ post, options = {} }: PostItemProps) => {
       )}
     >
       <h3 className="text-xl font-semibold">{post.title}</h3>
-      <p className="mt-2 text-muted-foreground">{post.summary}</p>
+      {/* <p className="mt-2 text-muted-foreground">{post.createdAt}</p> */}
+      {/* 當定時間 */}
+      <p className="mt-2 text-sm text-muted-foreground">
+        {(() => {
+          const d = new Date(post.createdAt)
+          const year = d.getFullYear()
+          const month = d.getMonth() + 1
+          const day = d.getDate()
+          const weekday = new Intl.DateTimeFormat(
+            navigator.language ?? 'zh-TW',
+            { weekday: 'long' }
+          ).format(d)
+          return `${year} 年 ${month} 月 ${day} 日 ${weekday}`
+        })()}
+      </p>
     </motion.a>
   )
 }
