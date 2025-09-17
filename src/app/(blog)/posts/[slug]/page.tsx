@@ -128,7 +128,7 @@ export default async function Page({
 
   return (
     <main className="mt-20 mx-auto py-8 max-w-7xl flex space-x-4">
-      <article className="prose dark:prose-invert flex-1 ">
+      <article className="prose dark:prose-invert flex-1 max-w-none">
         <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
       </article>
       {showToc && <TableOfContent toc={scope.toc} />}
