@@ -84,7 +84,7 @@ const PostItem = ({ post, options = {} }: PostItemProps) => {
         'before:content-[""] dark:before:bg-white/10',
         'before:pointer-events-none before:absolute before:inset-y-0 before:-inset-x-6 before:rounded-lg',
         'before:bg-gradient-radial from-transparent to-transparent',
-        'before:opacity-0 before:scale-0 before:transition-all before:duration-[400ms] before:ease-[cubic-bezier(0.33,1,0.68,1)]',
+        'before:opacity-0 before:scale-0 before:transition-all before:duration-[200ms] before:ease-[cubic-bezier(0.33,1,0.68,1)]',
         // Hover/Focus 狀態 - 從進入點展開
         'hover:before:from-primary/5 hover:before:to-transparent hover:before:opacity-100 hover:before:scale-100',
         'focus:before:from-primary/5 focus:before:to-transparent focus:before:opacity-100 focus:before:scale-100',
