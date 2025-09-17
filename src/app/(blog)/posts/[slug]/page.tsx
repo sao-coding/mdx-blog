@@ -35,6 +35,13 @@ const components: MDXComponents = {
   }: React.ComponentPropsWithoutRef<'div'>) {
     return <div className="mdx-wrapper">{children}</div>
   },
+  /* 為所有標題加上 scroll-margin-top（對應 sticky top-20） */
+  h1: (props) => <h1 className="scroll-mt-20" {...props} />,
+  h2: (props) => <h2 className="scroll-mt-20" {...props} />,
+  h3: (props) => <h3 className="scroll-mt-20" {...props} />,
+  h4: (props) => <h4 className="scroll-mt-20" {...props} />,
+  h5: (props) => <h5 className="scroll-mt-20" {...props} />,
+  h6: (props) => <h6 className="scroll-mt-20" {...props} />,
   code: ({ className, children }) => {
     if (className === 'language-mermaid') {
       return <Mermaid>{String(children).trim()}</Mermaid>
@@ -80,7 +87,7 @@ export default async function Page({
   try {
     // await new Promise((resolve) => setTimeout(resolve, 2000));
     source = await getPostData(slug)
-    console.log('MDX source:', source)
+    // console.log('MDX source:', source)
   } catch (err) {
     return <ErrorComponent error="讀取內容時發生錯誤！" />
   }
@@ -116,13 +123,15 @@ export default async function Page({
   if (error) {
     return <ErrorComponent error={error.message} />
   }
-
+  console.log('TOC:', scope.toc)
   const showToc = frontmatter.showToc !== false
 
   return (
-    <main className="prose mx-auto py-8 dark:prose-invert mt-20">
+    <main className="mt-20 mx-auto py-8 max-w-7xl flex space-x-4">
+      <article className="prose dark:prose-invert flex-1 ">
+        <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
+      </article>
       {showToc && <TableOfContent toc={scope.toc} />}
-      <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
     </main>
   )
 }

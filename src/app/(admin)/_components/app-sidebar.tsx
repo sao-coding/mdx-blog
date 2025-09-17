@@ -12,8 +12,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-} from "@/components/ui/sidebar";
-import { NavUser } from "./nav-user";
+} from '@/components/ui/sidebar'
+import { NavUser } from './nav-user'
 import {
   Command,
   Home,
@@ -21,28 +21,28 @@ import {
   PlusIcon,
   Square,
   SquarePenIcon,
-} from "lucide-react";
-import { cookies } from "next/headers";
-import Link from "next/link";
+} from 'lucide-react'
+import { cookies } from 'next/headers'
+import Link from 'next/link'
 
 const getUser = async () => {
-  const cookieStore = await cookies();
+  const cookieStore = await cookies()
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/get-session`,
     {
       headers: {
         cookie: cookieStore.toString(), // Next.js 15 可用 cookies() 取得
       },
-      cache: "no-store",
+      cache: 'no-store',
     }
-  );
-  const session = await res.json();
-  console.log({ session });
-  return session;
-};
+  )
+  const session = await res.json()
+  console.log({ session })
+  return session
+}
 
 const AppSidebar = async () => {
-  // const user = await getUser();
+  const user = await getUser()
   return (
     <Sidebar variant="floating" className="z-20">
       <SidebarHeader>
@@ -93,7 +93,7 @@ const AppSidebar = async () => {
                 <SidebarMenuButton asChild>
                   <a href="#">
                     <Home />
-                    <span>Home</span>
+                    <span>子項目</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuSub>
@@ -101,9 +101,11 @@ const AppSidebar = async () => {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>{/* <NavUser user={user.user} /> */}</SidebarFooter>
+      <SidebarFooter>
+        <NavUser user={user.user} />
+      </SidebarFooter>
     </Sidebar>
-  );
-};
+  )
+}
 
-export default AppSidebar;
+export default AppSidebar
