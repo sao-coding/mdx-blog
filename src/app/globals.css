@@ -147,7 +147,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background/90 text-foreground;
+    @apply bg-background text-foreground;
   }
 }
 
@@ -237,4 +237,8 @@
       box-shadow: 0 0 8px hsl(var(--primary) / 0.5);
     }
   }
+}
+.prose {
+  max-width: 100% !important;
+  font-size: 1.1rem;
 }
