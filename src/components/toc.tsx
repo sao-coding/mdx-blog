@@ -1,5 +1,6 @@
-// ...existing code...
-import React from 'react'
+'use client'
+
+import React, { useEffect, useRef } from 'react'
 
 export interface TocItem {
   value: string
@@ -34,7 +35,7 @@ function renderToc(items: TocItem[] = []) {
   }
 
   return (
-    <ul className="toc-list space-y-2">
+    <>
       {items.map((item) => {
         const depth = item.depth ?? 1
         const paddingLeft = Math.max(depth - 1, 0) * 12 // px
@@ -66,7 +67,7 @@ function renderToc(items: TocItem[] = []) {
           </li>
         )
       })}
-    </ul>
+    </>
   )
 }
 
@@ -75,16 +76,48 @@ function renderToc(items: TocItem[] = []) {
  * - 顯示文章目錄，支援多層縮排與分級字級
  */
 export const TableOfContent: React.FC<TableOfContentProps> = ({ toc }) => {
+  const containerRef = useRef<HTMLUListElement>(null)
+
+  useEffect(() => {
+    // const setMaxWidth = throttle(() => {
+    //   if (containerRef.current) {
+    //     containerRef.current.style.maxWidth = `${
+    //       window.innerWidth -
+    //       containerRef.current.getBoundingClientRect().x -
+    //       30
+    //     }px`
+    //   }
+    // }, 14)
+
+    const setMaxWidth = () => {
+      if (containerRef.current) {
+        containerRef.current.style.maxWidth = `${
+          window.innerWidth -
+          containerRef.current.getBoundingClientRect().x -
+          30
+        }px`
+      }
+    }
+
+    setMaxWidth()
+
+    window.addEventListener('resize', setMaxWidth)
+    return () => {
+      window.removeEventListener('resize', setMaxWidth)
+    }
+  }, [])
   if (!toc || toc.length === 0) return null
+
   return (
     // 這裡加入 sticky 與 top 偏移，讓目錄在滾動時固定顯示
-    <aside className="flex-shrink-0 sticky top-20 self-start">
-      <nav
-        className="toc-container p-4 rounded-2xl w-80"
-        aria-label="Table of contents"
-      >
-        <div className="max-h-[60vh] overflow-auto">{renderToc(toc)}</div>
-      </nav>
+    <aside className="sticky top-20 self-start">
+      <div className="relative h-full" aria-label="Table of contents">
+        <div className="max-h-[60vh] overflow-auto absolute">
+          <ul ref={containerRef} className="toc-list space-y-2">
+            {renderToc(toc)}
+          </ul>
+        </div>
+      </div>
     </aside>
   )
 }
