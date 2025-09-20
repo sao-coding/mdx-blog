@@ -125,13 +125,18 @@ export default async function Page({
   }
   console.log('TOC:', scope.toc)
   const showToc = frontmatter.showToc !== false
-
   return (
-    <main className="mt-20 mx-auto py-8 max-w-7xl flex space-x-4">
-      <article className="prose dark:prose-invert flex-1 max-w-none">
-        <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
-      </article>
-      {showToc && <TableOfContent toc={scope.toc} />}
-    </main>
+    <div className="container m-auto mt-[120px] max-w-7xl px-2 md:px-6 lg:px-4 xl:px-0">
+      <div className="relative flex min-h-[120px] grid-cols-[auto_200px] lg:grid">
+        <div className="min-w-0">
+          <article className="prose dark:prose-invert max-w-full">
+            <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
+          </article>
+        </div>
+        <div className="relative hidden lg:block">
+          {showToc && <TableOfContent toc={scope.toc} />}
+        </div>
+      </div>
+    </div>
   )
 }
