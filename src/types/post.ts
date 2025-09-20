@@ -7,7 +7,7 @@
 //         "summary": "這是文章摘要，可選填。",
 //         "content": "test",
 //         "slug": "test-article-slug",
-//         "coverImage": "https://example.com/image.jpg",
+//         "cover": "https://example.com/image.jpg",
 //         "status": "draft",
 //         "publishedAt": null,
 //         "viewCount": 0,
@@ -50,42 +50,43 @@
 //     }
 // }
 
-import { CategoryItem } from "./categories";
-import { TagItem } from "./tags";
+import { CategoryItem } from './categories'
+import { TagItem } from './tags'
 
 // post 清單 不包含 content
 export interface PostItem {
-  id: string;
-  title: string;
-  summary: string | null;
-  content: string;
-  slug: string;
-  coverImage: string | null;
-  status: "draft" | "published" | "archived";
-  publishedAt: string | null;
-  viewCount: number;
-  likeCount: number;
-  commentCount: number;
-  allowComments: boolean;
-  isFeatured: boolean;
-  isSticky: boolean;
-  createdAt: string;
-  updatedAt: string;
-  category: CategoryItem;
-  tags: TagItem[];
+  id: string
+  title: string
+  summary: string | null
+  content: string
+  slug: string
+  cover: string | null
+  status: 'draft' | 'published' | 'archived'
+  publishedAt: string | null
+  viewCount: number
+  likeCount: number
+  commentCount: number
+  comments: boolean
+  pin: boolean
+  pinOrder: number
+  isSticky: boolean
+  createdAt: string
+  updatedAt: string
+  category: CategoryItem
+  tags: TagItem[]
   author: {
-    id: string;
-    username: string;
-    displayUsername: string;
-    name: string | null;
-    email: string;
-    emailVerified: boolean;
-    image: string | null;
-    role: string | null;
-    banned: boolean;
-    banReason: string | null;
-    banExpires: string | null;
-    createdAt: string;
-    updatedAt: string;
-  };
+    id: string
+    username: string
+    displayUsername: string
+    name: string | null
+    email: string
+    emailVerified: boolean
+    image: string | null
+    role: string | null
+    banned: boolean
+    banReason: string | null
+    banExpires: string | null
+    createdAt: string
+    updatedAt: string
+  }
 }

@@ -5,9 +5,7 @@ import { postSchema } from '@/schemas/post'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import type z from 'zod'
-import MultipleSelector, {
-  type Option,
-} from '@/components/ui/multiple-selector'
+import MultipleSelector from '@/components/ui/multiple-selector'
 import {
   Form,
   FormControl,
@@ -41,25 +39,13 @@ import {
   Loader2Icon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useWatch } from 'react-hook-form'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useQuery } from '@tanstack/react-query'
 import { ApiResponse } from '@/types/api'
 import { CategoryItem } from '@/types/categories'
 import { PostItem } from '@/types/post'
 import { TagItem } from '@/types/tags'
-
-const OPTIONS: Option[] = [
-  { label: '生活', value: 'lifestyle' },
-  { label: '科技', value: 'technology' },
-  { label: '旅遊', value: 'travel' },
-  { label: '美食', value: 'food' },
-  { label: '健康', value: 'health' },
-  { label: '教育', value: 'education' },
-  { label: '藝術', value: 'art' },
-  { label: '運動', value: 'sports' },
-  { label: '音樂', value: 'music' },
-  { label: '電影', value: 'movies' },
-]
 
 const PostEditor = ({ postData }: { postData?: PostItem }) => {
   const [isPublishing, setIsPublishing] = useState(false)
@@ -108,15 +94,22 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
       summary: '',
       category: '',
       tags: [],
-      coverImage: '',
+      cover: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      author: 'asdadsadadasd',
-      allowComments: true,
-      isFeatured: false,
-      isSticky: false,
+      comments: true,
+      pin: false,
+      pinOrder: 0,
       status: 'draft',
     },
+  })
+
+  // useWatch to subscribe to pin changes so component re-renders when checkbox toggles
+  // ensure a boolean defaultValue so undefined doesn't block rendering
+  const isPinned = useWatch({
+    control: form.control,
+    name: 'pin',
+    defaultValue: false,
   })
 
   useEffect(() => {
@@ -133,19 +126,13 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
       tags: postData.tags
         ? postData.tags.map((tag) => ({ label: tag.name, value: tag.id }))
         : [],
-      coverImage: postData.coverImage ?? '',
+      cover: postData.cover ?? '',
       createdAt: postData.createdAt ?? new Date().toISOString(),
       updatedAt: postData.updatedAt ?? new Date().toISOString(),
-      // author is not present on PostItem list type; leave empty string
-      author: postData.author.id ?? '',
-      allowComments:
-        typeof postData.allowComments === 'boolean'
-          ? postData.allowComments
-          : true,
-      isFeatured:
-        typeof postData.isFeatured === 'boolean' ? postData.isFeatured : false,
-      isSticky:
-        typeof postData.isSticky === 'boolean' ? postData.isSticky : false,
+      comments:
+        typeof postData.comments === 'boolean' ? postData.comments : true,
+      pin: typeof postData.pin === 'boolean' ? postData.pin : false,
+      pinOrder: typeof postData.pinOrder === 'number' ? postData.pinOrder : 0,
       status: postData.status ?? 'draft',
     })
   }, [postData, form, categoriesStatus])
@@ -500,7 +487,7 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
                     <CardContent className="pt-0">
                       <FormField
                         control={form.control}
-                        name="coverImage"
+                        name="cover"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
@@ -529,7 +516,7 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
                   <CardContent className="pt-0 space-y-3 sm:space-y-4">
                     <FormField
                       control={form.control}
-                      name="allowComments"
+                      name="comments"
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-1">
                           <FormControl>
@@ -552,30 +539,7 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
 
                     <FormField
                       control={form.control}
-                      name="isFeatured"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-1">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={(v) =>
-                                field.onChange(Boolean(v))
-                              }
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-sm">精選文章</FormLabel>
-                            <p className="text-xs text-muted-foreground">
-                              在首頁特別推薦
-                            </p>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="isSticky"
+                      name="pin"
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-1">
                           <FormControl>
@@ -595,12 +559,43 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
                         </FormItem>
                       )}
                     />
+
+                    {isPinned && (
+                      <FormField
+                        control={form.control}
+                        name="pinOrder"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs text-muted-foreground">
+                              置頂順序
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                value={field.value ?? ''}
+                                onChange={(e) => {
+                                  // coerce input string to number before passing to react-hook-form
+                                  const val = e.target.value
+                                  const num =
+                                    val === '' ? undefined : Number(val)
+                                  field.onChange(num)
+                                }}
+                                type="number"
+                                min={0}
+                                placeholder="0"
+                                className="text-sm"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </CardContent>
                 </Card>
               </div>
             </div>
           </form>
-          <DevTool control={form.control} />
+          {/* <DevTool control={form.control} /> */}
         </Form>
       </div>
     </>
