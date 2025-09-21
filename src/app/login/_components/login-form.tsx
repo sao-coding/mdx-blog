@@ -13,7 +13,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
-import { ErrorComponent, LoadingComponent } from '@/components'
+import { toast } from 'sonner'
+import { Loader2Icon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export function LoginForm({
   className,
@@ -25,26 +27,24 @@ export function LoginForm({
     password: 'password123',
   })
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [message, setMessage] = useState<string | null>(null)
+  const router = useRouter()
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    setError(null)
-    setMessage(null)
-    try {
-      const res = await authClient.signIn.username({
-        username: loginData.username,
-        password: loginData.password,
-      })
-      setMessage('登入成功！' + JSON.stringify(res))
-    } catch (err) {
-      const error = err as { message?: string }
-      setError(error.message || '登入失敗')
-    } finally {
-      setLoading(false)
+    const { data, error } = await authClient.signIn.username({
+      username: loginData.username,
+      password: loginData.password,
+    })
+    console.log('login', { data, error })
+    if (error) {
+      toast.error(error.message || '登入失敗')
+    } else {
+      toast.success('登入成功！')
+      // 重新導向到管理後台首頁
+      router.push('/admin')
     }
+    setLoading(false)
   }
 
   return (
@@ -83,20 +83,17 @@ export function LoginForm({
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                登入
+                {loading ? (
+                  <>
+                    <Loader2Icon className="animate-spin" />
+                    登入中...
+                  </>
+                ) : (
+                  '登入'
+                )}
               </Button>
             </div>
           </form>
-
-          <div className="mt-4">
-            {loading && <LoadingComponent />}
-            {error && <ErrorComponent error={error} />}
-            {message && (
-              <div className="text-green-600 bg-green-100 p-2 rounded">
-                {message}
-              </div>
-            )}
-          </div>
         </CardContent>
       </Card>
     </div>
