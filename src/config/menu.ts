@@ -35,17 +35,16 @@ export const NAV_LINKS: NavLinks = [
     text: '文章',
     children: [
       {
-        icon: IconPencil,
-        href: '/blog/drafts',
-        text: '草稿區',
-        show: false,
-      },
-      {
-        href: '/blog/about',
-        text: '關於我',
+        href: '/categories/programming',
+        text: '程式設計',
         show: true,
       },
-      { href: '/blog/archives', text: '文章歸檔', show: true },
+      {
+        icon: IconPencil,
+        href: '/categories/archives',
+        text: '歸檔',
+        show: true,
+      },
     ],
   },
   {
