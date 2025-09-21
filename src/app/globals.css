@@ -52,6 +52,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-timeline-line: var(--timeline-line);
+  --color-timeline-dot: var(--timeline-dot);
+  --color-timeline-date: var(--timeline-date);
   --animate-marquee: marquee var(--duration) infinite linear;
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
   @keyframes marquee {
@@ -106,6 +109,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --timeline-line: oklch(0.75 0.02 85);
+  --timeline-dot: oklch(0.45 0.08 45);
+  --timeline-date: oklch(0.55 0.02 85);
 }
 
 .dark {
@@ -140,6 +146,9 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --timeline-line: oklch(0.3 0.01 270);
+  --timeline-dot: oklch(0.7 0.08 200);
+  --timeline-date: oklch(0.6 0.02 270);
 }
 
 @layer base {
@@ -238,7 +247,67 @@
     }
   }
 }
-.prose {
-  max-width: 100% !important;
-  font-size: 1.1rem;
+
+/* Added timeline CSS using :before for line and :after for dots */
+.timeline-list {
+  position: relative;
+  min-width: 0;
+  flex: 1 1 0%;
+  list-style-position: inside;
+}
+
+.timeline-list > li {
+  position: relative;
+  list-style-type: none;
+  line-height: 1.6;
+  padding: 3px 0;
+  margin: 0 0 0 1rem;
+}
+
+/* Timeline line using :before */
+.timeline-list > li:before {
+  content: '';
+  position: absolute;
+  left: -19px;
+  bottom: 0;
+  border-left: 2px solid var(--color-timeline-line);
+}
+
+/* Single item - no line */
+/* .timeline-item:first-child:last-child:before { */
+.timeline-list > li:first-child:last-child:before {
+  border-left: 0;
+}
+
+/* Middle items - full height line */
+/* .timeline-item:not(:first-child):not(:last-child):before { */
+.timeline-list > li:not(:first-child):not(:last-child):before {
+  top: 0;
+}
+
+/* First item - line starts from 50% */
+/* .timeline-item:first-child:before { */
+.timeline-list > li:first-child:before {
+  top: 50%;
+}
+
+/* Last item - line ends at 50% */
+/* .timeline-item:last-child:before { */
+.timeline-list > li:last-child:before {
+  bottom: 50%;
+  top: 0;
+}
+
+/* Timeline dots using :after */
+/* .timeline-item:after { */
+.timeline-list > li:after {
+  content: '';
+  left: calc(-1rem - 6px);
+  top: 50%;
+  transform: translateY(-50%);
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  position: absolute;
+  background-color: var(--color-timeline-dot);
 }
