@@ -3,10 +3,10 @@
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
-import { PostItem } from '@/types/post'
+import { CategoryItem } from '@/types/categories'
 import { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
-import { MoreHorizontal, MoreHorizontalIcon } from 'lucide-react'
+import { MoreHorizontalIcon } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,31 +16,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { DataTableColumnHeader } from '../../../../_components/table/table-column-header'
+import { DataTableColumnHeader } from '@/app/(admin)/_components/table/table-column-header'
 import Link from 'next/link'
-// export interface PostListItem {
-//   id: string;
-//   title: string;
-//   slug: string;
-//   status: "draft" | "published" | "archived";
-//   author: {
-//     id: string;
-//     name: string;
-//   };
-//   views: number;
-//   comments: number;
-//   publishedAt: string | null;
-//   createdAt: string;
-//   updatedAt: string;
-// }
 
-const postStatusMap: Record<string, { label: string; color: string }> = {
-  draft: { label: '草稿', color: 'bg-gray-200 text-gray-800' },
-  published: { label: '已發佈', color: 'bg-green-100 text-green-800' },
-  archived: { label: '已歸檔', color: 'bg-yellow-100 text-yellow-800' },
-}
-
-export const columns: ColumnDef<PostItem>[] = [
+export const columns: ColumnDef<CategoryItem>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -54,12 +33,6 @@ export const columns: ColumnDef<PostItem>[] = [
         className="translate-y-[2px]"
       />
     ),
-    meta: {
-      className: cn(
-        'sticky md:table-cell left-0 z-10 rounded-tl',
-        'bg-background transition-colors duration-200 group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted'
-      ),
-    },
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -72,46 +45,45 @@ export const columns: ColumnDef<PostItem>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'title',
-    // header: "標題",
+    accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="標題" />
+      <DataTableColumnHeader column={column} title="名稱" />
     ),
     cell: ({ row }) => {
-      const post = row.original
+      const category = row.original
       return (
         <Link
-          href={`/admin/posts/editor/${post.id}`}
-          className="hover:underline flex items-center"
+          href={`/admin/categories/editor/${category.id}`}
+          className="hover:underline"
         >
-          <span className="ml-2 w-40 truncate">{post.title}</span>
+          <span className="ml-2 font-medium">{category.name}</span>
         </Link>
       )
     },
   },
   {
-    accessorKey: 'author',
+    accessorKey: 'slug',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="作者" />
+      <DataTableColumnHeader column={column} title="網址別名" />
     ),
-    cell: ({ row }) => {
-      const post = row.original
-      return <span className="ml-2">{post.author.name}</span>
-    },
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'postCount',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="文章數" />
+    ),
+  },
+  {
+    accessorKey: 'isActive',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="狀態" />
     ),
     cell: ({ row }) => {
-      const post = row.original
+      const isActive = row.original.isActive
       return (
-        <div className="px-1">
-          <Badge className={postStatusMap[post.status]?.color}>
-            {postStatusMap[post.status]?.label ?? '-'}
-          </Badge>
-        </div>
+        <Badge variant={isActive ? 'default' : 'secondary'}>
+          {isActive ? '啟用' : '停用'}
+        </Badge>
       )
     },
   },
@@ -146,7 +118,7 @@ export const columns: ColumnDef<PostItem>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const payment = row.original
+      const category = row.original
 
       return (
         <DropdownMenu>
@@ -159,13 +131,13 @@ export const columns: ColumnDef<PostItem>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>更多操作</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(category.id)}
             >
-              複製文章 ID
+              複製分類 ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>查看文章</DropdownMenuItem>
-            <DropdownMenuItem>刪除文章</DropdownMenuItem>
+            <DropdownMenuItem>檢視分類</DropdownMenuItem>
+            <DropdownMenuItem>刪除分類</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

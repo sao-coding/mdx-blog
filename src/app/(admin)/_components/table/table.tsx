@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   ColumnDef,
@@ -12,7 +12,7 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table'
 
 import {
   Table,
@@ -21,32 +21,34 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { DataTablePagination } from "./posts-table-pagination";
-import { Input } from "@/components/ui/input";
-import { DataTableViewOptions } from "./posts-table-view-options";
-import { useState } from "react";
+} from '@/components/ui/table'
+import { DataTablePagination } from './table-pagination'
+import { Input } from '@/components/ui/input'
+import { DataTableViewOptions } from './table-view-options'
+import { useState } from 'react'
 
-declare module "@tanstack/react-table" {
+declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends RowData, TValue> {
-    className: string;
+    className: string
   }
 }
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  columns: ColumnDef<TData, TValue>[]
+  searchColumnId: string
+  data: TData[]
 }
 
 export function PostsTable<TData, TValue>({
   columns,
+  searchColumnId,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState({})
 
   const table = useReactTable({
     data,
@@ -65,16 +67,18 @@ export function PostsTable<TData, TValue>({
       columnVisibility,
       rowSelection,
     },
-  });
+  })
 
   return (
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="搜尋文章標題..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          placeholder={`搜尋 ${searchColumnId}...`}
+          value={
+            (table.getColumn(searchColumnId)?.getFilterValue() as string) ?? ''
+          }
           onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
+            table.getColumn(searchColumnId)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -90,7 +94,7 @@ export function PostsTable<TData, TValue>({
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
-                      className={header.column.columnDef.meta?.className ?? ""}
+                      className={header.column.columnDef.meta?.className ?? ''}
                     >
                       {header.isPlaceholder
                         ? null
@@ -99,7 +103,7 @@ export function PostsTable<TData, TValue>({
                             header.getContext()
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -109,13 +113,13 @@ export function PostsTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                   className="group/row"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={cell.column.columnDef.meta?.className ?? ""}
+                      className={cell.column.columnDef.meta?.className ?? ''}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -142,5 +146,5 @@ export function PostsTable<TData, TValue>({
         <DataTablePagination table={table} />
       </div>
     </div>
-  );
+  )
 }
