@@ -2,22 +2,15 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import AppSidebar from "@/app/(admin)/_components/app-sidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/sidebar'
+import AppSidebar from '@/app/(admin)/_components/app-sidebar'
+import { Separator } from '@/components/ui/separator'
+import { AdminBreadcrumb } from './_components/admin-breadcrumb'
 
 export default function AdminLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <SidebarProvider>
@@ -29,20 +22,10 @@ export default function AdminLayout({
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-4"
           />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">文章</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>編輯文章</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <AdminBreadcrumb />
         </header>
         <div className="p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
-  );
+  )
 }

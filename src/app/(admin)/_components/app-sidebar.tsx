@@ -16,6 +16,7 @@ import {
 import { NavUser } from './nav-user'
 import {
   Command,
+  FolderIcon,
   Home,
   LayoutDashboardIcon,
   PlusIcon,
@@ -97,6 +98,24 @@ const AppSidebar = async () => {
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuSub>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        {/* 分類管理 */}
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="/admin/categories">
+                  <FolderIcon />
+                  <span>分類</span>
+                </a>
+              </SidebarMenuButton>
+              <SidebarMenuAction asChild>
+                <Link href="/admin/categories/editor">
+                  <PlusIcon /> <span className="sr-only">新增分類</span>
+                </Link>
+              </SidebarMenuAction>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
