@@ -40,7 +40,7 @@ export const postSchema = z.object({
   updatedAt: z.string().datetime({ message: '文章更新時間格式錯誤' }),
 
   // 設定選項
-  comments: z.boolean(),
+  allowComments: z.boolean(),
   pin: z.boolean(),
   // 置頂數字
   pinOrder: z.number().min(0).optional(),

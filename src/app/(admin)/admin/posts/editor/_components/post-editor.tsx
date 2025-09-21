@@ -97,7 +97,7 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
       cover: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      comments: true,
+      allowComments: true,
       pin: false,
       pinOrder: 0,
       status: 'draft',
@@ -129,8 +129,10 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
       cover: postData.cover ?? '',
       createdAt: postData.createdAt ?? new Date().toISOString(),
       updatedAt: postData.updatedAt ?? new Date().toISOString(),
-      comments:
-        typeof postData.comments === 'boolean' ? postData.comments : true,
+      allowComments:
+        typeof postData.allowComments === 'boolean'
+          ? postData.allowComments
+          : true,
       pin: typeof postData.pin === 'boolean' ? postData.pin : false,
       pinOrder: typeof postData.pinOrder === 'number' ? postData.pinOrder : 0,
       status: postData.status ?? 'draft',
@@ -516,7 +518,7 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
                   <CardContent className="pt-0 space-y-3 sm:space-y-4">
                     <FormField
                       control={form.control}
-                      name="comments"
+                      name="allowComments"
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-1">
                           <FormControl>

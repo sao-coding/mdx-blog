@@ -30,7 +30,7 @@ const PostEditorPage = ({ params }: { params: Promise<{ id: string }> }) => {
       cover: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      comments: true,
+      allowComments: true,
       pin: false,
       pinOrder: 0,
       status: 'draft',

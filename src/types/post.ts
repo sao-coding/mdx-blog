@@ -66,7 +66,7 @@ export interface PostItem {
   viewCount: number
   likeCount: number
   commentCount: number
-  comments: boolean
+  allowComments: boolean
   pin: boolean
   pinOrder: number
   isSticky: boolean
