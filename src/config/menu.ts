@@ -49,13 +49,8 @@ export const NAV_LINKS: NavLinks = [
   },
   {
     icon: IconCategory,
-    href: '/categories',
-    text: '分類',
-    children: [
-      { href: '/categories/web', text: '網頁開發', show: true },
-      { href: '/categories/life', text: '生活隨筆', show: true },
-      { href: '/categories/tech', text: '科技新知', show: true },
-    ],
+    href: '/notes',
+    text: '日記',
   },
   // 更多
   {
