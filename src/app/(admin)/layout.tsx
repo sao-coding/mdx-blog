@@ -6,12 +6,32 @@ import {
 import AppSidebar from '@/app/(admin)/_components/app-sidebar'
 import { Separator } from '@/components/ui/separator'
 import { AdminBreadcrumb } from './_components/admin-breadcrumb'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
-export default function AdminLayout({
+const getAuth = async () => {
+  const cookieStore = await cookies()
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/get-session`,
+    {
+      headers: {
+        cookie: cookieStore.toString(), // Next.js 15 可用 cookies() 取得
+      },
+      cache: 'no-store',
+    }
+  )
+  return res.json()
+}
+
+export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const session = await getAuth()
+  if (!session?.user) {
+    redirect('/login')
+  }
   return (
     <SidebarProvider>
       <AppSidebar />
