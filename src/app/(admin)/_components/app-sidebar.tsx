@@ -18,6 +18,7 @@ import {
   Command,
   FolderIcon,
   Home,
+  KeyRoundIcon,
   LayoutDashboardIcon,
   PlusIcon,
   Square,
@@ -114,6 +115,24 @@ const AppSidebar = async () => {
               <SidebarMenuAction asChild>
                 <Link href="/admin/categories/editor">
                   <PlusIcon /> <span className="sr-only">新增分類</span>
+                </Link>
+              </SidebarMenuAction>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        {/* apiKeys */}
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/admin/api-keys">
+                  <KeyRoundIcon />
+                  <span>API 金鑰</span>
+                </Link>
+              </SidebarMenuButton>
+              <SidebarMenuAction asChild>
+                <Link href="/admin/api-keys/create">
+                  <PlusIcon /> <span className="sr-only">新增 API 金鑰</span>
                 </Link>
               </SidebarMenuAction>
             </SidebarMenuItem>
