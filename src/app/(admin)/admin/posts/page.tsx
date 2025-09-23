@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@/types/api'
 import { PostItem } from '@/types/post'
 import { cookies } from 'next/headers'
-import { PostsTable } from '../../_components/table/table'
+import { DataTableContainer } from '../../_components/table/table'
 import { columns } from './_components/table/posts-columns'
 import AdminShell from '../../_components/admin-shell'
 
@@ -25,7 +25,7 @@ const PostsPage = async () => {
   return (
     <AdminShell title="文章列表">
       <div>
-        <PostsTable
+        <DataTableContainer
           columns={columns}
           searchColumnId="title"
           data={posts.data}

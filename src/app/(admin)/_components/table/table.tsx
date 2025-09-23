@@ -39,7 +39,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function PostsTable<TData, TValue>({
+export function DataTableContainer<TData, TValue>({
   columns,
   searchColumnId,
   data,

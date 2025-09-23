@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@/types/api'
 import { CategoryItem } from '@/types/categories'
 import { cookies } from 'next/headers'
-import { PostsTable } from '@/app/(admin)/_components/table/table'
+import { DataTableContainer } from '@/app/(admin)/_components/table/table'
 import { columns } from './_components/table/categories-columns'
 import AdminShell from '../../_components/admin-shell'
 
@@ -30,7 +30,7 @@ const CategoriesPage = async () => {
 
   return (
     <AdminShell title="分類">
-      <PostsTable
+      <DataTableContainer
         columns={columns}
         searchColumnId="name"
         data={categories.data ?? []}
