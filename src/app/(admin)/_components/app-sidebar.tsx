@@ -23,6 +23,7 @@ import {
   PlusIcon,
   Square,
   SquarePenIcon,
+  TagIcon,
 } from 'lucide-react'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
@@ -93,30 +94,32 @@ const AppSidebar = async () => {
               </SidebarMenuAction>
               <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
                 <SidebarMenuButton asChild>
-                  <a href="#">
+                  <Link href="#">
                     <Home />
                     <span>子項目</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuSub>
             </SidebarMenuItem>
           </SidebarMenu>
-        </SidebarGroup>
-        {/* 分類管理 */}
-        <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <a href="/admin/categories">
+                <Link href="/admin/categories">
                   <FolderIcon />
                   <span>分類</span>
-                </a>
-              </SidebarMenuButton>
-              <SidebarMenuAction asChild>
-                <Link href="/admin/categories/editor">
-                  <PlusIcon /> <span className="sr-only">新增分類</span>
                 </Link>
-              </SidebarMenuAction>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/admin/tags">
+                  <TagIcon />
+                  <span>標籤</span>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
@@ -130,11 +133,6 @@ const AppSidebar = async () => {
                   <span>API 金鑰</span>
                 </Link>
               </SidebarMenuButton>
-              <SidebarMenuAction asChild>
-                <Link href="/admin/api-keys/create">
-                  <PlusIcon /> <span className="sr-only">新增 API 金鑰</span>
-                </Link>
-              </SidebarMenuAction>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>

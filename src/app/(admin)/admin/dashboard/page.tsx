@@ -1,4 +1,4 @@
-import AdminShell from '../../_components/admin-shell'
+import AdminShell from '../../_components/layout/admin-shell'
 import { cookies } from 'next/headers'
 
 // app/page.tsx (Server Component)

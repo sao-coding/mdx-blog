@@ -3,7 +3,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
-import { CategoryItem } from '@/types/categories'
+import { CategoryItem } from '@/types/category'
 import { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import { MoreHorizontalIcon } from 'lucide-react'

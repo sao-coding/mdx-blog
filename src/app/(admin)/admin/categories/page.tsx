@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@/types/api'
-import { CategoryItem } from '@/types/categories'
+import { CategoryItem } from '@/types/category'
 import { cookies } from 'next/headers'
 import { DataTableContainer } from '@/app/(admin)/_components/table/table'
 import { columns } from './_components/table/categories-columns'
-import AdminShell from '../../_components/admin-shell'
+import AdminShell from '../../_components/layout/admin-shell'
 
 const getCategories = async () => {
   const cookieStore = await cookies()
