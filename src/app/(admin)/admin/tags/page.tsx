@@ -9,7 +9,9 @@ async function fetchTags(): Promise<TagItem[]> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/admin/tags`,
     {
-      headers: await headers(),
+      headers: {
+        cookie: cookieStore.toString(),
+      },
       next: {
         tags: ['tags'],
       },
