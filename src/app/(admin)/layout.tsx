@@ -5,7 +5,7 @@ import {
 } from '@/components/ui/sidebar'
 import AppSidebar from '@/app/(admin)/_components/app-sidebar'
 import { Separator } from '@/components/ui/separator'
-import { AdminBreadcrumb } from './_components/admin-breadcrumb'
+import { AdminBreadcrumb } from './_components/layout/admin-breadcrumb'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
