@@ -26,6 +26,8 @@ import { DataTablePagination } from './table-pagination'
 import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from './table-view-options'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-react'
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends RowData, TValue> {
@@ -37,12 +39,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   searchColumnId: string
   data: TData[]
+  onBatchDelete?: (selectedRows: TData[]) => void
 }
 
 export function DataTableContainer<TData, TValue>({
   columns,
   searchColumnId,
   data,
+  onBatchDelete,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -82,7 +86,25 @@ export function DataTableContainer<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <DataTableViewOptions table={table} />
+        <div className="flex items-center gap-2 ml-auto">
+          {table.getFilteredSelectedRowModel().rows.length > 0 &&
+            onBatchDelete && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  const selectedRows = table
+                    .getFilteredSelectedRowModel()
+                    .rows.map((row) => row.original)
+                  onBatchDelete(selectedRows)
+                }}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                刪除選中項目 ({table.getFilteredSelectedRowModel().rows.length})
+              </Button>
+            )}
+          <DataTableViewOptions table={table} />
+        </div>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
@@ -135,7 +157,7 @@ export function DataTableContainer<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  查無資料
                 </TableCell>
               </TableRow>
             )}
