@@ -6,18 +6,9 @@ import { cn } from '@/lib/utils'
 import { PostItem } from '@/types/post'
 import { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
-import { MoreHorizontal, MoreHorizontalIcon } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '../../../../_components/table/table-column-header'
 import Link from 'next/link'
+import { PostRowActions } from './post-row-actions'
 // export interface PostListItem {
 //   id: string;
 //   title: string;
@@ -145,30 +136,6 @@ export const columns: ColumnDef<PostItem>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>更多操作</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              複製文章 ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>查看文章</DropdownMenuItem>
-            <DropdownMenuItem>刪除文章</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    cell: ({ row }) => <PostRowActions row={row} />,
   },
 ]

@@ -43,9 +43,9 @@ import { useWatch } from 'react-hook-form'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useQuery } from '@tanstack/react-query'
 import { ApiResponse } from '@/types/api'
-import { CategoryItem } from '@/types/categories'
+import { CategoryItem } from '@/types/category'
 import { PostItem } from '@/types/post'
-import { TagItem } from '@/types/tags'
+import { TagItem } from '@/types/tag'
 
 const PostEditor = ({ postData }: { postData?: PostItem }) => {
   const [isPublishing, setIsPublishing] = useState(false)
