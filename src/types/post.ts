@@ -1,5 +1,5 @@
-import { CategoryItem } from './categories'
-import { TagItem } from './tags'
+import { CategoryItem } from './category'
+import { TagItem } from './tag'
 
 // post 清單 不包含 content
 export interface PostItem {
