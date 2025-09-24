@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import type { ApiKey } from '@/types/api-key'
-import { RowActions } from '../row-actions'
+import { RowActions } from './row-actions'
 
 const formatDate = (iso?: string) => {
   if (!iso) return '-'
@@ -41,7 +41,7 @@ export const columns: ColumnDef<ApiKey, unknown>[] = [
   },
   {
     id: 'rateLimit',
-    header: 'Rate Limit',
+    header: '速率限制',
     cell: ({ row }) => {
       const r = row.original as ApiKey
       if (!r?.rateLimitEnabled) return <div>—</div>
@@ -55,7 +55,7 @@ export const columns: ColumnDef<ApiKey, unknown>[] = [
   },
   {
     id: 'requests',
-    header: 'Requests',
+    header: '請求次數',
     cell: ({ row }) => {
       const r = row.original as ApiKey
       return (

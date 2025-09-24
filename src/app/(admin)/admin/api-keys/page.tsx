@@ -1,11 +1,11 @@
 import type { ApiResponse } from '@/types/api'
 import { cookies } from 'next/headers'
-import AdminShell from '../../_components/admin-shell'
+import AdminShell from '../../_components/layout/admin-shell'
 import { DataTableContainer } from '../../_components/table/table'
 import { columns } from './_components/table/api-keys-columns'
 import type { ApiKey } from '@/types/api-key'
 import { Button } from '@/components/ui/button'
-import { CreateApiKey } from './_components/create'
+import CreateApiKey from './_components/create'
 
 const getApiKeys = async () => {
   const cookieStore = await cookies()
@@ -44,3 +44,5 @@ const ApiKeysPage = async () => {
 }
 
 export default ApiKeysPage
+// FIXME: 表格資料快取問題
+// TODO: 設定api-key 呼叫次數 目前每天只有 10 次

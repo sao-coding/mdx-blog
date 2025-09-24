@@ -12,19 +12,12 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button, buttonVariants } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import type { ApiKey } from '@/types/api-key'
-import { Loader2Icon, MoreHorizontalIcon } from 'lucide-react'
+import { Loader2Icon, TrashIcon } from 'lucide-react'
 import { type Row } from '@tanstack/react-table'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
-import { apiKeysUpdate } from '../_actions/api-keys-actions'
+import { updateApiKeys } from '../../_actions/api-keys-actions'
 import { toast } from 'sonner'
 
 interface RowActionsProps {
@@ -36,15 +29,6 @@ export function RowActions({ row }: RowActionsProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   const r = row.original
-  const handleCopy = () => {
-    if (typeof window !== 'undefined' && r?.prefix) {
-      navigator.clipboard?.writeText(r.prefix)
-    }
-  }
-  const handleToggle = async () => {
-    console.log('Toggle enabled for', r?.id)
-    // TODO: call API to toggle enabled
-  }
 
   const handleDelete = async () => {
     console.log('Delete', r?.id)
@@ -52,46 +36,30 @@ export function RowActions({ row }: RowActionsProps) {
     const { data, error } = await authClient.apiKey.delete({
       keyId: r?.id, // required
     })
-    if (error) {
+    if (data?.success) {
+      // 成功後重新驗證標籤以更新列表
+      await updateApiKeys()
+      toast.success('API 金鑰已刪除')
+      setIsOpen(false)
+    } else {
       console.error('Failed to delete API key:', error)
-      toast('刪除 API 金鑰失敗，請稍後再試')
-      return
+      toast.error('刪除 API 金鑰失敗，請稍後再試')
     }
-    // 成功後重新驗證標籤以更新列表
-    await apiKeysUpdate()
-    toast('API 金鑰已刪除')
     setIsLoading(false)
-    setIsOpen(false)
   }
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex size-8 p-0 data-[state=open]:bg-muted"
-          >
-            <MoreHorizontalIcon className="size-4" />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuItem onClick={handleCopy}>複製前綴</DropdownMenuItem>
-          <DropdownMenuItem onClick={handleToggle}>
-            {r?.enabled ? '停用' : '啟用'}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <AlertDialogTrigger asChild>
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              variant="destructive"
-            >
-              刪除
-            </DropdownMenuItem>
-          </AlertDialogTrigger>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+        >
+          <TrashIcon className="h-4 w-4" />
+          <span className="sr-only">刪除 API 金鑰</span>
+        </Button>
+      </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>確定要刪除嗎？</AlertDialogTitle>

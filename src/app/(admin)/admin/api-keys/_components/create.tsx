@@ -1,5 +1,8 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 import {
   DialogStack,
   DialogStackBody,
@@ -13,48 +16,65 @@ import {
   DialogStackTrigger,
 } from '@/components/kibo-ui/dialog-stack'
 import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
-import { CopyIcon, PlusIcon } from 'lucide-react'
-import React from 'react'
+import { apiKeySchema } from '@/schemas/api-key'
+import { CheckIcon, CopyIcon, PlusIcon } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { updateApiKeys } from '../_actions/api-keys-actions'
+import { AnimatePresence, motion } from 'motion/react'
 
-export function CreateApiKey() {
-  const [name, setName] = React.useState('')
-  const [expiresIn, setExpiresIn] = React.useState(7)
-  const [prefix, setPrefix] = React.useState('')
-  const [newKey, setNewKey] = React.useState<string | null>(null)
-  const [open, setOpen] = React.useState(false)
+const API_KEY_PREFIX = 'sao-'
 
-  const handleCreate = async () => {
+type CreateApiKeyForm = z.infer<typeof apiKeySchema>
+
+const CreateApiKey = () => {
+  const [newKey, setNewKey] = useState<string | null>(null)
+  const [open, setOpen] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
+
+  const form = useForm<CreateApiKeyForm>({
+    resolver: zodResolver(apiKeySchema),
+    defaultValues: {
+      name: '',
+      expiresIn: null,
+    },
+  })
+
+  const handleCreate = async (values: CreateApiKeyForm) => {
     try {
-      // 驗證必填欄位
-      if (!name.trim()) {
-        alert('請輸入 API 金鑰名稱')
-        return false
-      }
-
       const { data, error } = await authClient.apiKey.create({
-        name: name.trim(),
-        expiresIn: 60 * 60 * 24 * expiresIn,
-        prefix: prefix.trim(),
+        name: values.name,
+        expiresIn: values.expiresIn ? 60 * 60 * 24 * values.expiresIn : null, // null 代表永不過期
+        prefix: API_KEY_PREFIX,
       })
 
       if (error) {
         console.error('建立 API 金鑰失敗:', error)
-        alert('建立 API 金鑰失敗，請稍後再試')
+        toast.error('建立 API 金鑰失敗，請稍後再試')
         return false
       }
 
       if (data?.key) {
         setNewKey(data.key)
+        await updateApiKeys() // 重新驗證 API 金鑰列表
         return true
       }
 
       return false
     } catch (error) {
       console.error('建立 API 金鑰時發生錯誤:', error)
-      alert('建立 API 金鑰時發生錯誤，請稍後再試')
+      toast.error('建立 API 金鑰時發生錯誤，請稍後再試')
       return false
     }
   }
@@ -64,25 +84,17 @@ export function CreateApiKey() {
 
     try {
       await navigator.clipboard.writeText(newKey)
-      // 可以在這裡加入成功提示
-      console.log('API 金鑰已複製到剪貼簿')
+      setIsCopied(true)
+      toast.success('API 金鑰已複製到剪貼簿')
+      setTimeout(() => setIsCopied(false), 2000)
     } catch (error) {
       console.error('複製失敗:', error)
-      // 降級方案：選取文字
-      const input = document.querySelector(
-        'input[readonly]'
-      ) as HTMLInputElement
-      if (input) {
-        input.select()
-        document.execCommand('copy')
-      }
+      toast.error('複製失敗，請手動選取並複製')
     }
   }
 
   const handleReset = () => {
-    setName('')
-    setExpiresIn(7)
-    setPrefix('')
+    form.reset()
     setNewKey(null)
   }
 
@@ -110,65 +122,78 @@ export function CreateApiKey() {
           <DialogStackHeader>
             <DialogStackTitle>建立 API 金鑰</DialogStackTitle>
             <DialogStackDescription>
-              建立一個新的 API 金鑰以存取您的專案。
+              建立一個新的 API 金鑰以存取您的專案。金鑰前綴為 &ldquo;
+              {API_KEY_PREFIX}&rdquo;。
             </DialogStackDescription>
           </DialogStackHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                名稱 *
-              </Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="col-span-3"
-                placeholder="例如：我的應用程式"
-                required
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleCreate)}
+              className="space-y-4 py-4"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>名稱 *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="例如：我的應用程式" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="expiresIn" className="text-right">
-                過期天數
-              </Label>
-              <Input
-                id="expiresIn"
-                type="number"
-                min="1"
-                max="365"
-                value={expiresIn}
-                onChange={(e) =>
-                  setExpiresIn(Math.max(1, parseInt(e.target.value) || 1))
-                }
-                className="col-span-3"
+              <FormField
+                control={form.control}
+                name="expiresIn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>過期天數</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="365"
+                        placeholder="留空代表永不過期"
+                        value={field.value ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          field.onChange(
+                            value === '' ? null : parseInt(value) || null
+                          )
+                        }}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                        disabled={field.disabled}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      API 金鑰的有效期限，最少 1 天，最多 365
+                      天。留空代表永不過期
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="prefix" className="text-right">
-                前綴
-              </Label>
-              <Input
-                id="prefix"
-                value={prefix}
-                onChange={(e) => setPrefix(e.target.value)}
-                className="col-span-3"
-                placeholder="例如：sk, api"
-              />
-            </div>
-          </div>
+            </form>
+          </Form>
           <DialogStackFooter>
             <DialogStackNext asChild>
               <Button
                 type="submit"
-                disabled={!name.trim()}
+                disabled={!form.formState.isValid}
                 onClick={async (e) => {
-                  const success = await handleCreate()
+                  e.preventDefault()
+                  const values = form.getValues()
+                  const success = await handleCreate(values)
                   if (!success) {
                     e.preventDefault()
                   }
                 }}
               >
-                建立
+                建立金鑰
               </Button>
             </DialogStackNext>
           </DialogStackFooter>
@@ -194,7 +219,28 @@ export function CreateApiKey() {
                 onClick={handleCopy}
                 title="複製 API 金鑰"
               >
-                <CopyIcon className="size-4" />
+                {/* <CopyIcon className="size-4" /> */}
+                {/* {copied ? (
+                  <Check className="size-4 text-green-500" />
+                ) : (
+                  <CopyIcon className="size-4" />
+                )} */}
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={isCopied ? 'check' : 'copy'}
+                    data-slot="copy-button-icon"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    {isCopied ? (
+                      <CheckIcon className="size-4 text-green-500" />
+                    ) : (
+                      <CopyIcon className="size-4" />
+                    )}
+                  </motion.span>
+                </AnimatePresence>
               </Button>
             </div>
             <div className="rounded-md bg-yellow-50 p-3 text-sm text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
@@ -210,3 +256,5 @@ export function CreateApiKey() {
     </DialogStack>
   )
 }
+
+export default CreateApiKey
