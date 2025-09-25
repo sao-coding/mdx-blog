@@ -160,17 +160,31 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
     }
     console.log('Transformed publish data:', updateData)
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/admin/posts/${postData?.id}`,
-      {
-        method: 'PATCH',
+    let res
+    if (postData?.id) {
+      // update existing post
+      res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/posts/${postData.id}`,
+        {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateData),
+        }
+      )
+    } else {
+      // create new post
+      res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/posts/`, {
+        method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateData),
-      }
-    )
+      })
+    }
     if (!res.ok) {
       toast.error('發佈文章失敗，請稍後再試。')
       setIsPublishing(false)

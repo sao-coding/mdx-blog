@@ -40,7 +40,13 @@ export function PostsTableWithActions({ data }: PostsTableWithActionsProps) {
 
     try {
       const postIds = selectedPosts.map((post) => post.id)
-      const result = await deletePosts(postIds)
+      // const result = await deletePosts(postIds)
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/posts${postIds[0]}`,
+        { method: 'DELETE' }
+      )
+      const result = await res.json()
 
       if (result.success) {
         toast.success(`成功刪除 ${selectedPosts.length} 篇文章`)

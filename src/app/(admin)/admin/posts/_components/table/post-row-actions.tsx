@@ -27,6 +27,7 @@ import { useState } from 'react'
 import { deletePosts } from '../../_actions/posts-actions'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { updateTags } from '../../../tags/_actions/tags-actions'
 
 interface PostRowActionsProps {
   row: Row<PostItem>
@@ -43,10 +44,20 @@ export function PostRowActions({ row }: PostRowActionsProps) {
     setIsLoading(true)
 
     try {
-      const result = await deletePosts([post.id])
+      // const result = await deletePosts([post.id])
 
-      if (result.success) {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/posts/${post.id}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        }
+      )
+      const result = await res.json()
+
+      if (result.status === 'success') {
         toast.success('文章已刪除')
+        await updateTags()
         setIsOpen(false)
       } else {
         toast.error(result.error || '刪除失敗，請稍後再試')
