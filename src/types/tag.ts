@@ -4,7 +4,6 @@ export interface TagItem {
   slug: string
   description: string | null
   color: string | null
-  isActive: boolean
   postCount?: number
   createdAt: string
   updatedAt: string
