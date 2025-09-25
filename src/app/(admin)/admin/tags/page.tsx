@@ -1,7 +1,7 @@
 import AdminShell from '@/app/(admin)/_components/layout/admin-shell'
 import { DataTableContainer } from '@/app/(admin)/_components/table/table'
 import { columns } from './_components/table/tags-columns'
-import { CreateTagDialog } from './_components/create'
+import { TagFormDialog } from './_components/table/tag-form-dialog'
 import { cookies } from 'next/headers'
 import { TagItem } from '@/types/tag'
 import { ApiResponse } from '@/types/api'
@@ -36,7 +36,7 @@ export default async function TagsPage() {
   const tags: ApiResponse<TagItem[]> = await getTags()
 
   return (
-    <AdminShell title="標籤管理" actions={<CreateTagDialog />}>
+    <AdminShell title="標籤管理" actions={<TagFormDialog mode="create" />}>
       <DataTableContainer
         columns={columns}
         data={tags.data}

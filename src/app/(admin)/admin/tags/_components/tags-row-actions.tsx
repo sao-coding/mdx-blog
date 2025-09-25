@@ -20,21 +20,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { Loader2Icon, MoreHorizontalIcon, TrashIcon } from 'lucide-react'
+import { Loader2Icon, MoreHorizontalIcon } from 'lucide-react'
 import { type Row } from '@tanstack/react-table'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { updateTags } from '../../_actions/tags-actions'
+import { updateTags } from '../_actions/tags-actions'
 import type { TagItem } from '@/types/tag'
 import { ApiResponse } from '@/types/api'
 import Link from 'next/link'
-import { EditTagDialog } from '../edit'
+import { TagFormDialog } from './table/tag-form-dialog'
 
-interface RowActionsProps {
+interface TagsRowActionsProps {
   row: Row<TagItem>
 }
 
-export function RowActions({ row }: RowActionsProps) {
+export function TagsRowActions({ row }: TagsRowActionsProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -86,7 +86,7 @@ export function RowActions({ row }: RowActionsProps) {
             複製標籤 ID
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <EditTagDialog tag={tag}>
+          <TagFormDialog mode="edit" tag={tag}>
             <DropdownMenuItem
               onSelect={(e) => {
                 e.preventDefault()
@@ -95,7 +95,7 @@ export function RowActions({ row }: RowActionsProps) {
             >
               編輯標籤
             </DropdownMenuItem>
-          </EditTagDialog>
+          </TagFormDialog>
           <DropdownMenuItem asChild>
             <Link href={`/tags/${tag.slug}`} target="_blank">
               查看標籤

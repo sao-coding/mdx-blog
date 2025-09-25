@@ -1,24 +1,11 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
-import { MoreHorizontalIcon } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/app/(admin)/_components/table/table-column-header'
-import Link from 'next/link'
-import { toast } from 'sonner'
 import { TagItem } from '@/types/tag'
-import { RowActions } from './row-actions'
+import { TagsRowActions } from '../tags-row-actions'
 
 export const columns: ColumnDef<TagItem>[] = [
   {
@@ -68,20 +55,6 @@ export const columns: ColumnDef<TagItem>[] = [
     ),
   },
   {
-    accessorKey: 'isActive',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="狀態" />
-    ),
-    cell: ({ row }) => {
-      const isActive = row.original.isActive
-      return (
-        <Badge variant={isActive ? 'default' : 'secondary'}>
-          {isActive ? '啟用' : '停用'}
-        </Badge>
-      )
-    },
-  },
-  {
     accessorKey: 'createdAt',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="建立時間" />
@@ -111,6 +84,6 @@ export const columns: ColumnDef<TagItem>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => <RowActions row={row} />,
+    cell: ({ row }) => <TagsRowActions row={row} />,
   },
 ]
