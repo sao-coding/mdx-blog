@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { DataTableContainer } from '@/app/(admin)/_components/table/table'
 import { columns } from './_components/table/categories-columns'
 import AdminShell from '../../_components/layout/admin-shell'
+import { CategoryFormDialog } from './_components/category-form-dialog'
 
 const getCategories = async () => {
   const cookieStore = await cookies()
@@ -12,6 +13,9 @@ const getCategories = async () => {
   const res = await fetch(url, {
     headers: {
       cookie: cookieStore.toString(),
+    },
+    next: {
+      tags: ['categories'],
     },
   })
   console.log('Fetch response status:', res.status)
@@ -29,7 +33,7 @@ const CategoriesPage = async () => {
   const categories: ApiResponse<CategoryItem[]> = await getCategories()
 
   return (
-    <AdminShell title="分類">
+    <AdminShell title="分類" actions={<CategoryFormDialog mode="create" />}>
       <DataTableContainer
         columns={columns}
         searchColumnId="name"

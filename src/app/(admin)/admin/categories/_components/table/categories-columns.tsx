@@ -6,18 +6,8 @@ import { cn } from '@/lib/utils'
 import { CategoryItem } from '@/types/category'
 import { ColumnDef } from '@tanstack/react-table'
 import dayjs from 'dayjs'
-import { MoreHorizontalIcon } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/app/(admin)/_components/table/table-column-header'
-import Link from 'next/link'
+import { CategoriesRowActions } from '../categories-row-actions'
 
 export const columns: ColumnDef<CategoryItem>[] = [
   {
@@ -50,14 +40,12 @@ export const columns: ColumnDef<CategoryItem>[] = [
       <DataTableColumnHeader column={column} title="名稱" />
     ),
     cell: ({ row }) => {
-      const category = row.original
       return (
-        <Link
-          href={`/admin/categories/editor/${category.id}`}
-          className="hover:underline"
-        >
-          <span className="ml-2 font-medium">{category.name}</span>
-        </Link>
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium">
+            {row.getValue('name')}
+          </span>
+        </div>
       )
     },
   },
@@ -117,30 +105,6 @@ export const columns: ColumnDef<CategoryItem>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const category = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>更多操作</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(category.id)}
-            >
-              複製分類 ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>檢視分類</DropdownMenuItem>
-            <DropdownMenuItem>刪除分類</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    cell: ({ row }) => <CategoriesRowActions row={row} />,
   },
 ]
