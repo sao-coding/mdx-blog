@@ -9,5 +9,4 @@ export const categoryFormSchema = z.object({
     .regex(/^#[0-9A-Fa-f]{6}$/, '顏色格式不正確')
     .optional(),
   parentId: z.string().optional().nullable(),
-  isActive: z.boolean().optional(),
 })

@@ -62,20 +62,6 @@ export const columns: ColumnDef<CategoryItem>[] = [
     ),
   },
   {
-    accessorKey: 'isActive',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="狀態" />
-    ),
-    cell: ({ row }) => {
-      const isActive = row.original.isActive
-      return (
-        <Badge variant={isActive ? 'default' : 'secondary'}>
-          {isActive ? '啟用' : '停用'}
-        </Badge>
-      )
-    },
-  },
-  {
     accessorKey: 'createdAt',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="建立時間" />
