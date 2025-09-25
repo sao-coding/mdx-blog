@@ -39,6 +39,7 @@ import {
   Loader2Icon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { postsUpdate } from '../../_actions/posts-actions'
 import { useWatch } from 'react-hook-form'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useQuery } from '@tanstack/react-query'
@@ -153,10 +154,13 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
     setIsPublishing(true)
     const publishData = { ...data, status: 'published' }
     console.log('Publishing post:', publishData)
-    // publishData tags 要先轉成 string[] 存入新的變數
+    // publishData tags 要先轉成 string[] 並把 category 轉為 API 所需的 categoryId
+    const { category, tags, ...rest } = publishData
     const updateData = {
-      ...publishData,
-      tags: publishData.tags.map((tag) => tag.value),
+      ...rest,
+      // API expects `categoryId` (see openapi), not `category`
+      categoryId: category || null,
+      tags: tags.map((tag) => tag.value),
     }
     console.log('Transformed publish data:', updateData)
 
@@ -190,6 +194,7 @@ const PostEditor = ({ postData }: { postData?: PostItem }) => {
       setIsPublishing(false)
       return
     }
+    await postsUpdate()
     toast.success('文章已發佈', {
       description: '您的文章已成功發佈，讀者現在可以看到它了。',
     })
