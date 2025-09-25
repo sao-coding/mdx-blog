@@ -23,8 +23,8 @@ export function LoginForm({
 }: React.ComponentProps<'div'>) {
   // 登入狀態
   const [loginData, setLoginData] = useState({
-    username: 'testuser',
-    password: 'password123',
+    username: '',
+    password: '',
   })
   const [loading, setLoading] = useState(false)
   const router = useRouter()
