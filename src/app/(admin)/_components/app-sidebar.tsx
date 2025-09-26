@@ -52,7 +52,7 @@ const AppSidebar = async () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <Link href="#">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Command className="size-4" />
                 </div>
@@ -60,7 +60,7 @@ const AppSidebar = async () => {
                   <span className="truncate font-medium">blog</span>
                   <span className="truncate text-xs">Enterprise</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -70,10 +70,10 @@ const AppSidebar = async () => {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <a href="/admin/dashboard">
+                <Link href="/admin/dashboard">
                   <LayoutDashboardIcon />
                   <span>儀表板</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -82,10 +82,10 @@ const AppSidebar = async () => {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <a href="/admin/posts">
+                <Link href="/admin/posts">
                   <SquarePenIcon />
                   <span>文章</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
               <SidebarMenuAction asChild>
                 <Link href="/admin/posts/editor">
