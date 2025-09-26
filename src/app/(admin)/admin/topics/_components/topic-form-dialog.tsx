@@ -55,6 +55,7 @@ export function TopicFormDialog({
       name: '',
       slug: '',
       description: '',
+      introduce: '',
     },
   })
 
@@ -64,12 +65,14 @@ export function TopicFormDialog({
         name: topic.name,
         slug: topic.slug,
         description: topic.description ?? '',
+        introduce: topic.introduce ?? '',
       })
     } else {
       form.reset({
         name: '',
         slug: '',
         description: '',
+        introduce: '',
       })
     }
   }, [topic, form, isEditMode, isOpen])
@@ -164,6 +167,22 @@ export function TopicFormDialog({
                     <Textarea
                       {...field}
                       placeholder="關於這個專欄的簡短描述..."
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="introduce"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>介紹</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="關於這個專欄的詳細介紹..."
                     />
                   </FormControl>
                   <FormMessage />

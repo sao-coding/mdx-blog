@@ -10,4 +10,5 @@ export const topicFormSchema = z.object({
       '網址別名只能包含小寫字母、數字和連字符 (-)'
     ),
   description: z.string().optional(),
+  introduce: z.string().min(1, '介紹為必填項'),
 })
