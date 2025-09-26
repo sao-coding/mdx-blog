@@ -15,11 +15,13 @@ import {
 } from '@/components/ui/sidebar'
 import { NavUser } from './nav-user'
 import {
+  ChartColumnBigIcon,
   Command,
   FolderIcon,
   Home,
   KeyRoundIcon,
   LayoutDashboardIcon,
+  NotebookPenIcon,
   PlusIcon,
   Square,
   SquarePenIcon,
@@ -120,6 +122,39 @@ const AppSidebar = async () => {
                   <span>標籤</span>
                 </Link>
               </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/admin/notes">
+                  <NotebookPenIcon />
+                  <span>日記</span>
+                </Link>
+              </SidebarMenuButton>
+              <SidebarMenuAction asChild>
+                <Link href="/admin/notes/editor">
+                  <PlusIcon /> <span className="sr-only">新增日記</span>
+                </Link>
+              </SidebarMenuAction>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          {/* 專欄 */}
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/admin/topics">
+                  <ChartColumnBigIcon />
+                  <span>專欄</span>
+                </Link>
+              </SidebarMenuButton>
+              <SidebarMenuAction asChild>
+                <Link href="/admin/topics">
+                  <PlusIcon /> <span className="sr-only">新增專欄</span>
+                </Link>
+              </SidebarMenuAction>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
