@@ -1,16 +1,19 @@
 // src/types/note.ts
-export interface NoteItem {
+export interface Note {
   id: string
   title: string
   content: string
   mood: string | null
   weather: string | null
   bookmark: boolean
-  status: 'published' | 'draft'
+  status: boolean
   coordinates: string | null
   location: string | null
   createdAt: string
   updatedAt: string
+  topicId: string | null
+}
+export interface NoteItem extends Omit<Note, 'topicId'> {
   topic: {
     id: string
     name: string
