@@ -3,6 +3,7 @@
 import { revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import { noteSchema } from '@/schemas/note'
+import { cookies, headers } from 'next/headers'
 
 /**
  * Server action to revalidate the notes tag.
@@ -17,6 +18,7 @@ export async function notesUpdate() {
  * Server action to create a new note
  */
 export async function createNote(noteData: z.infer<typeof noteSchema>) {
+  const cookieStore = await cookies()
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/admin/notes`,
@@ -24,13 +26,15 @@ export async function createNote(noteData: z.infer<typeof noteSchema>) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          cookie: cookieStore.toString(),
         },
-        credentials: 'include',
         body: JSON.stringify(noteData),
       }
     )
 
     if (!response.ok) {
+      console.log('Create note failed with status:', noteData)
+      console.log('Create note response:', await response.text())
       throw new Error('Failed to create note')
     }
 
@@ -56,6 +60,7 @@ export async function updateNote(
   noteId: string,
   noteData: z.infer<typeof noteSchema>
 ) {
+  const cookieStore = await cookies()
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/admin/notes/${noteId}`,
@@ -63,8 +68,8 @@ export async function updateNote(
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          cookie: cookieStore.toString(),
         },
-        credentials: 'include',
         body: JSON.stringify(noteData),
       }
     )
