@@ -34,15 +34,16 @@ const getNoteData = async (id: string): Promise<ApiResponse<NoteItem>> => {
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }): Promise<Metadata> {
   try {
-    const { data: note } = await getNoteData(params.id)
+    const { id } = await params
+    const { data: note } = await getNoteData(id)
     return {
       title: note.title,
       description: note.content.substring(0, 150), // 簡單取前 150 字當描述
     }
-  } catch (error) {
+  } catch {
     return {
       title: '日記',
       description: '一篇日記',
@@ -75,7 +76,7 @@ export default async function Page({
 
   try {
     noteData = await getNoteData(id)
-  } catch (err) {
+  } catch {
     return <ErrorComponent error="讀取日記時發生錯誤！" />
   }
 
