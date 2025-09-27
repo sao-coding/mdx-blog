@@ -3,8 +3,8 @@ export interface Note {
   id: string
   title: string
   content: string
-  mood: string | null
-  weather: string | null
+  mood: string
+  weather: string
   bookmark: boolean
   status: boolean
   coordinates: string | null
