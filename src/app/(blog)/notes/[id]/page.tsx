@@ -1,5 +1,6 @@
 // src/app/(blog)/notes/[id]/page.tsx
 import { Suspense } from 'react'
+import { NoteMainContainer } from './_components/note-main-container'
 import { evaluate } from 'next-mdx-remote-client/rsc'
 import type { EvaluateOptions, MDXComponents } from 'next-mdx-remote-client/rsc'
 import { Metadata } from 'next'
@@ -106,11 +107,15 @@ export default async function Page({
   }
 
   return (
-    <div className="container m-auto mt-[120px] max-w-4xl px-4">
+    <>
       <NoteHeader note={note} />
-      <article className="prose dark:prose-invert max-w-full">
-        <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
-      </article>
-    </div>
+      <NoteMainContainer>
+        <div className="lg:p-[30px_45px] p-[2rem_1rem]">
+          <article className="prose dark:prose-invert max-w-full">
+            <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
+          </article>
+        </div>
+      </NoteMainContainer>
+    </>
   )
 }
