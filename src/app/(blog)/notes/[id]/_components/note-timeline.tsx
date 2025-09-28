@@ -2,10 +2,10 @@
 
 import { ApiResponse } from '@/types/api'
 import { NoteItem } from '@/types/note'
-import { CircleArrowRightIcon } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
-import Link from 'next/link'
+import { AnimatePresence, motion } from 'motion/react'
+import { NoteTimelineItem } from './note-timeline-item'
 
 const NoteTimeline = () => {
   // 獲取目前筆記id
@@ -32,25 +32,28 @@ const NoteTimeline = () => {
   })
 
   return (
-    <div>
-      <ul>
+    <motion.ul
+      className="space-y-1"
+      initial="initial"
+      animate="animate"
+      transition={{
+        staggerChildren: 0.05,
+      }}
+    >
+      <AnimatePresence>
         {data?.data.map((note) => {
           const isCurrent = note.id?.toString() === id
           return (
-            <li
+            <NoteTimelineItem
               key={note.id}
-              className={`flex items-center gap-2 ${
-                isCurrent ? 'font-semibold' : ''
-              }`}
-              aria-current={isCurrent ? 'true' : undefined}
-            >
-              {isCurrent ? <CircleArrowRightIcon className="h-4 w-4" /> : null}
-              <Link href={`/notes/${note.id}`}>{note.title}</Link>
-            </li>
+              active={isCurrent}
+              title={note.title}
+              id={note.id}
+            />
           )
         })}
-      </ul>
-    </div>
+      </AnimatePresence>
+    </motion.ul>
   )
 }
 
