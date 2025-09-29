@@ -1,17 +1,12 @@
 import { Suspense } from 'react'
 import { evaluate } from 'next-mdx-remote-client/rsc'
-import type { EvaluateOptions, MDXComponents } from 'next-mdx-remote-client/rsc'
+import type { EvaluateOptions } from 'next-mdx-remote-client/rsc'
 import { Metadata } from 'next'
-import { calculateSomeHow, getSourceSomeHow } from '@/utils/index'
 import { ErrorComponent, LoadingComponent } from '@/components/index'
-import TableOfContent from '@/components/toc'
-import { Test, Echarts } from '@/components/mdx/index'
-import Mermaid from '@/components/mdx/Mermaid'
-import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
-import rehypeKatex from 'rehype-katex'
-import remarkFlexibleToc, { TocItem } from 'remark-flexible-toc'
-import rehypeSlug from 'rehype-slug'
+import TableOfContent from '@/components/toc/toc'
+import { MdxRenderer, components } from '@/components/mdx/mdx-renderer'
+import getMdxOptions from '@/components/mdx/parsers'
+import type { TocItem } from 'remark-flexible-toc'
 
 type Scope = {
   readingTime: string
@@ -28,30 +23,30 @@ type Frontmatter = {
 }
 
 // 可擴充的 MDX 元件映射
-const components: MDXComponents = {
-  Test,
-  wrapper: function Wrapper({
-    children,
-  }: React.ComponentPropsWithoutRef<'div'>) {
-    return <div className="mdx-wrapper">{children}</div>
-  },
-  /* 為所有標題加上 scroll-margin-top（對應 sticky top-20） */
-  h1: (props) => <h1 className="scroll-mt-20" {...props} />,
-  h2: (props) => <h2 className="scroll-mt-20" {...props} />,
-  h3: (props) => <h3 className="scroll-mt-20" {...props} />,
-  h4: (props) => <h4 className="scroll-mt-20" {...props} />,
-  h5: (props) => <h5 className="scroll-mt-20" {...props} />,
-  h6: (props) => <h6 className="scroll-mt-20" {...props} />,
-  code: ({ className, children }) => {
-    if (className === 'language-mermaid') {
-      return <Mermaid>{String(children).trim()}</Mermaid>
-    }
-    if (className === 'language-echarts') {
-      return <Echarts>{String(children).trim()}</Echarts>
-    }
-    return <code className={className}>{children}</code>
-  },
-}
+// const components: MDXComponents = {
+//   Test,
+//   wrapper: function Wrapper({
+//     children,
+//   }: React.ComponentPropsWithoutRef<'div'>) {
+//     return <div className="mdx-wrapper">{children}</div>
+//   },
+//   /* 為所有標題加上 scroll-margin-top（對應 sticky top-20） */
+//   h1: (props) => <h1 className="scroll-mt-20" {...props} />,
+//   h2: (props) => <h2 className="scroll-mt-20" {...props} />,
+//   h3: (props) => <h3 className="scroll-mt-20" {...props} />,
+//   h4: (props) => <h4 className="scroll-mt-20" {...props} />,
+//   h5: (props) => <h5 className="scroll-mt-20" {...props} />,
+//   h6: (props) => <h6 className="scroll-mt-20" {...props} />,
+//   code: ({ className, children }) => {
+//     if (className === 'language-mermaid') {
+//       return <Mermaid>{String(children).trim()}</Mermaid>
+//     }
+//     if (className === 'language-echarts') {
+//       return <Echarts>{String(children).trim()}</Echarts>
+//     }
+//     return <code className={className}>{children}</code>
+//   },
+// }
 
 // SEO metadata（可依需求調整）
 export const metadata: Metadata = {
@@ -96,25 +91,25 @@ export default async function Page({
     return <ErrorComponent error="找不到內容來源或內容格式錯誤！" />
   }
 
-  const options: EvaluateOptions<Scope> = {
-    mdxOptions: {
-      remarkPlugins: [remarkGfm, remarkMath, remarkFlexibleToc],
-      rehypePlugins: [rehypeKatex, rehypeSlug],
-    },
-    parseFrontmatter: true,
-    scope: {
-      readingTime: calculateSomeHow(source),
-    },
-    vfileDataIntoScope: 'toc', // 這行會把 toc 注入 scope.toc
-  }
+  // const options: EvaluateOptions<Scope> = {
+  //   mdxOptions: {
+  //     remarkPlugins: [remarkGfm, remarkMath, remarkFlexibleToc],
+  //     rehypePlugins: [rehypeKatex, rehypeSlug],
+  //   },
+  //   parseFrontmatter: true,
+  //   scope: {
+  //     readingTime: calculateSomeHow(source),
+  //   },
+  //   vfileDataIntoScope: 'toc', // 這行會把 toc 注入 scope.toc
+  // }
 
   const { content, frontmatter, scope, error } = await evaluate<
     Frontmatter,
     Scope
   >({
     source,
-    options,
-    components,
+    options: getMdxOptions(source),
+    components: components,
   })
 
   console.log('Frontmatter:', frontmatter)
@@ -130,7 +125,7 @@ export default async function Page({
       <div className="relative flex min-h-[120px] grid-cols-[auto_200px] lg:grid">
         <div className="min-w-0">
           <article className="prose dark:prose-invert max-w-full">
-            <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
+            <MdxRenderer content={content} error={error} />
           </article>
         </div>
         <div className="relative hidden lg:block">

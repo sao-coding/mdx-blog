@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { useState } from "react";
+import { useState } from 'react'
 
-const Count = () => {
-  const [count, setCount] = useState(0);
+export const Count = () => {
+  const [count, setCount] = useState(0)
 
   return (
     <div className="my-4 p-4 border rounded bg-blue-50">
@@ -15,7 +15,5 @@ const Count = () => {
         Increment
       </button>
     </div>
-  );
-};
-
-export default Count;
+  )
+}

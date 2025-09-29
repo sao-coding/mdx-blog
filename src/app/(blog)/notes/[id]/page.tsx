@@ -12,11 +12,10 @@ import { ApiResponse } from '@/types/api'
 import remarkGfm from 'remark-gfm'
 import { format } from 'date-fns'
 import { ClockIcon } from 'lucide-react'
-import { MdxRenderer } from '@/components/mdx/mdx-renderer'
 import { Suspense } from 'react'
 import rehypeSlug from 'rehype-slug'
-// 這裡可以放日記特有的 MDX 元件
-const components: MDXComponents = {}
+import { getBasicMdxOptions } from '@/components/mdx/parsers'
+import { MdxRenderer, components } from '@/components/mdx/mdx-renderer'
 
 // 獲取日記資料的函式
 const getNoteData = async (id: string): Promise<ApiResponse<NoteItem>> => {
@@ -72,18 +71,10 @@ export default async function Page({
     return <ErrorComponent error="找不到日記內容或格式錯誤！" />
   }
 
-  const options: EvaluateOptions = {
-    mdxOptions: {
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypeSlug],
-    },
-    parseFrontmatter: true,
-  }
-
   const { content, error } = await evaluate({
     source,
-    options,
-    components,
+    options: getBasicMdxOptions(source),
+    components: components,
   })
 
   if (error) {
@@ -115,7 +106,7 @@ export default async function Page({
       </div>
       <NoteMainContainer>
         <article className="prose dark:prose-invert max-w-full mt-10">
-          <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
+          <MdxRenderer content={content} error={error} />
         </article>
       </NoteMainContainer>
     </div>
