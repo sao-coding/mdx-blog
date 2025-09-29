@@ -1,23 +1,22 @@
 // src/app/(blog)/notes/[id]/page.tsx
-import { Suspense } from 'react'
 import { NoteMainContainer } from './_components/note-main-container'
-import { evaluate } from 'next-mdx-remote-client/rsc'
-import type { EvaluateOptions, MDXComponents } from 'next-mdx-remote-client/rsc'
+import {
+  evaluate,
+  type EvaluateOptions,
+  type MDXComponents,
+} from 'next-mdx-remote-client/rsc'
 import { Metadata } from 'next'
-import { ErrorComponent, LoadingComponent } from '@/components/index' // 假設這些元件存在
+import { ErrorComponent, LoadingComponent } from '@/components/index'
 import { NoteItem } from '@/types/note'
 import { ApiResponse } from '@/types/api'
 import remarkGfm from 'remark-gfm'
-import rehypeSlug from 'rehype-slug'
 import { format } from 'date-fns'
-
+import { ClockIcon } from 'lucide-react'
+import { MdxRenderer } from '@/components/mdx/mdx-renderer'
+import { Suspense } from 'react'
+import rehypeSlug from 'rehype-slug'
 // 這裡可以放日記特有的 MDX 元件
-const components: MDXComponents = {
-  // 沿用文章的標題樣式
-  h1: (props) => <h1 className="scroll-mt-20" {...props} />,
-  h2: (props) => <h2 className="scroll-mt-20" {...props} />,
-  h3: (props) => <h3 className="scroll-mt-20" {...props} />,
-}
+const components: MDXComponents = {}
 
 // 獲取日記資料的函式
 const getNoteData = async (id: string): Promise<ApiResponse<NoteItem>> => {
@@ -51,21 +50,6 @@ export async function generateMetadata({
     }
   }
 }
-
-// 日記頁眉，顯示心情、天氣等資訊
-const NoteHeader = ({ note }: { note: NoteItem }) => (
-  <header className="mb-8 border-b pb-4">
-    <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
-      {note.title}
-    </h1>
-    <div className="mt-4 flex items-center space-x-4 text-sm text-muted-foreground">
-      <span>{format(new Date(note.createdAt), 'yyyy-MM-dd')}</span>
-      {note.mood && <span>心情: {note.mood}</span>}
-      {note.weather && <span>天氣: {note.weather}</span>}
-      {note.location && <span>於 {note.location}</span>}
-    </div>
-  </header>
-)
 
 export default async function Page({
   params,
@@ -107,15 +91,33 @@ export default async function Page({
   }
 
   return (
-    <>
-      <NoteHeader note={note} />
+    <div className="lg:p-[30px_45px] p-[2rem_1rem] bg-white dark:bg-zinc-900 border-zinc-200/70 dark:border-neutral-800 border">
+      <div className="">
+        <h1 className="my-8 text-balance text-left text-4xl font-bold leading-tight text-base-content/95">
+          {note.title}
+        </h1>
+        <span className="flex flex-wrap items-center text-sm text-neutral-content/60">
+          <span className="inline-flex items-center space-x-1">
+            <ClockIcon className="size-4" />
+            <span>{format(new Date(note.createdAt), 'yyyy-MM-dd')}</span>
+          </span>
+          <span className="mx-2">•</span>
+          <span className="inline-flex items-center space-x-1">
+            <span>天氣</span>
+            <span>{note.weather}</span>
+          </span>
+          <span className="mx-2">•</span>
+          <span className="inline-flex items-center space-x-1">
+            <span>心情</span>
+            <span>{note.mood}</span>
+          </span>
+        </span>
+      </div>
       <NoteMainContainer>
-        <div className="lg:p-[30px_45px] p-[2rem_1rem]">
-          <article className="prose dark:prose-invert max-w-full">
-            <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
-          </article>
-        </div>
+        <article className="prose dark:prose-invert max-w-full mt-10">
+          <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
+        </article>
       </NoteMainContainer>
-    </>
+    </div>
   )
 }

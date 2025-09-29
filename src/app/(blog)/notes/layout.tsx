@@ -7,9 +7,9 @@ export default function NoteLayout({
 }>) {
   return (
     <>
-      <div className="grid max-w-[60rem] mx-auto gap-4 xl:max-w-[calc(60rem+400px)] xl:grid-cols-[1fr_minmax(auto,60rem)_1fr] md:grid-cols-1">
+      <div className="grid max-w-[60rem] mt-12 mx-auto gap-4 xl:max-w-[calc(60rem+400px)] xl:grid-cols-[1fr_minmax(auto,60rem)_1fr] md:grid-cols-1">
         <NoteLeftSidebar className="relative hidden min-w-0 xl:block" />
-        <div className="">{children}</div>
+        <>{children}</>
         <div className="relative hidden min-w-0 xl:block">右</div>
       </div>
     </>
