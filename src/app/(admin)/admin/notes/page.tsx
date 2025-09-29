@@ -7,7 +7,6 @@ import { NotesTableWithActions } from './_components/table/notes-table-with-acti
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import AdminShell from '../../_components/layout/admin-shell'
 
 const NotesPage = () => {
@@ -15,7 +14,7 @@ const NotesPage = () => {
     queryKey: ['notes'],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/notes`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/notes?limit=100`,
         {
           credentials: 'include',
         }
