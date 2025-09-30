@@ -35,15 +35,19 @@ import {
   Clock,
   Heart,
   Cloud,
+  Book,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
   createNote,
   updateNote,
   notesUpdate,
 } from '../../_actions/notes-actions'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { Note } from '@/types/note'
+import { Note, NoteItem } from '@/types/note'
+import { Topic } from '@/types/topic'
+import { ApiResponse } from '@/types/api'
 
 const moodOptions = [
   { value: 'happy', label: '開心' },
@@ -63,10 +67,28 @@ const weatherOptions = [
   { value: 'stormy', label: '暴風雨' },
 ]
 
-const NoteEditor = ({ noteData }: { noteData?: Note }) => {
+const NoteEditor = ({ noteData }: { noteData?: NoteItem }) => {
   const [isPublishing, setIsPublishing] = useState(false)
   const [isSavingDraft, setIsSavingDraft] = useState(false)
   const isMobile = useIsMobile()
+
+  const { data: topicsData, isLoading: isLoadingTopics } = useQuery<
+    ApiResponse<Topic[]>
+  >({
+    queryKey: ['topics'],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/topics?limit=100`,
+        {
+          credentials: 'include',
+        }
+      )
+      if (!res.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return res.json()
+    },
+  })
 
   const form = useForm<z.infer<typeof noteSchema>>({
     resolver: zodResolver(noteSchema),
@@ -97,7 +119,7 @@ const NoteEditor = ({ noteData }: { noteData?: Note }) => {
       status: typeof noteData.status === 'boolean' ? noteData.status : true,
       coordinates: noteData.coordinates ?? '',
       location: noteData.location ?? '',
-      topicId: noteData.topicId ?? null,
+      topicId: noteData.topic?.id ?? null,
       createdAt: noteData.createdAt ?? new Date().toISOString(),
       updatedAt: noteData.updatedAt ?? new Date().toISOString(),
     })
@@ -445,6 +467,51 @@ const NoteEditor = ({ noteData }: { noteData?: Note }) => {
                               是否在前台顯示
                             </p>
                           </div>
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Topic */}
+                <Card className="border-0 shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                      <Book className="h-4 w-4 text-primary" />
+                      專欄設定
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="topicId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xs text-muted-foreground">
+                            選擇專欄
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              value={field.value ?? 'none'}
+                              onValueChange={(value) =>
+                                field.onChange(value === 'none' ? null : value)
+                              }
+                              disabled={isLoadingTopics}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="選擇專欄..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">不分類</SelectItem>
+                                {topicsData?.data?.map((topic) => (
+                                  <SelectItem key={topic.id} value={topic.id}>
+                                    {topic.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />

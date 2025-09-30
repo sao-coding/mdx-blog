@@ -1,9 +1,10 @@
-export interface TopicItem {
+// src/types/topic.ts
+export interface Topic {
   id: string
   name: string
   slug: string
+  introduce: string
   description: string | null
-  introduce: string | null
   noteCount: number
   createdAt: string
   updatedAt: string

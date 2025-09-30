@@ -12,6 +12,7 @@ import { cookies, headers } from 'next/headers'
 export async function notesUpdate() {
   console.log('Server action: revalidating notes')
   revalidateTag('notes')
+  revalidateTag('topics')
 }
 
 /**
