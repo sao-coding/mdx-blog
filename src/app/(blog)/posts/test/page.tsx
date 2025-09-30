@@ -5,9 +5,7 @@ import { Metadata } from 'next'
 import { calculateSomeHow, getSourceSomeHow } from '@/utils/index'
 import { ErrorComponent, LoadingComponent } from '@/components/index'
 import TableOfContent from '@/components/toc/toc'
-import { Test, Echarts } from '@/components/mdx/index'
-import Mermaid from '@/components/mdx/renderers/mermaid'
-import Count from '@/components/mdx/renderers/count'
+import { Mermaid, Count, Echarts } from '@/components/mdx/index'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
@@ -30,7 +28,6 @@ type Frontmatter = {
 
 // 可擴充的 MDX 元件映射
 const components: MDXComponents = {
-  Test,
   Count,
   wrapper: function Wrapper({
     children,
