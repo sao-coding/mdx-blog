@@ -2,6 +2,7 @@ import {
   IconBrandLine,
   IconBrandThreads,
   IconBrandX,
+  IconHistory,
   IconPencil,
 } from '@tabler/icons-react'
 import {
@@ -51,6 +52,11 @@ export const NAV_LINKS: NavLinks = [
     icon: IconCategory,
     href: '/notes',
     text: '日記',
+  },
+  {
+    icon: IconHistory,
+    href: '/timeline',
+    text: '時光',
   },
   // 更多
   {
