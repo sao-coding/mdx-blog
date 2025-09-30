@@ -1,11 +1,11 @@
-"use client";
-import Link from "next/link";
-import cx from "clsx";
-import { motion } from "motion/react";
+'use client'
+import Link from 'next/link'
+import cx from 'clsx'
+import { motion } from 'motion/react'
 
-import AnimatedText from "@/components/animation/text";
-import { SOCIAL_LINKS } from "@/config/menu";
-import { ChevronDownIcon } from "lucide-react";
+import AnimatedText from '@/components/animation/text'
+import { SOCIAL_LINKS } from '@/config/menu'
+import { ChevronDownIcon } from 'lucide-react'
 
 const Welcome = () => {
   return (
@@ -14,12 +14,13 @@ const Welcome = () => {
         <div className="flex flex-col gap-2">
           <div className="group flex flex-wrap">
             <AnimatedText
-              text={["嗨，我是唯一👋。", "一個正在學習的"]}
+              text={['嗨，我是唯一👋。', '一個正在學習的']}
               className="text-4xl font-black leading-loose"
+              delay={0.1}
             />
 
             <AnimatedText
-              text={"<Developer />"}
+              text={'<Developer />'}
               delay={1.5}
               el="code"
               className="mb-4 mr-1 self-end rounded-md px-1 text-3xl transition-colors duration-200 hover:bg-black/50"
@@ -29,7 +30,7 @@ const Welcome = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: [20, -10, 0] }}
-            transition={{ delay: 3 }}
+            transition={{ delay: 2 }}
             className=""
           >
             喜歡寫程式、看動漫😆
@@ -39,13 +40,17 @@ const Welcome = () => {
               <motion.div
                 key={social.link}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: [20, -10, 0] }}
-                transition={{ delay: 3 + index * 0.2 }}
+                animate={{ opacity: 1, y: [20, -15, 0] }}
+                transition={{ delay: 1 + index * 0.2, duration: 0.6 }}
               >
-                <Link href={social.link}>
+                <Link
+                  href={social.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <social.icon
                     className={cx(
-                      "h-9 w-9 rounded-full stroke-2 p-1",
+                      'h-9 w-9 rounded-full stroke-2 p-1',
                       social.color
                     )}
                   />
@@ -64,7 +69,7 @@ const Welcome = () => {
       </div>
       <ChevronDownIcon className="absolute bottom-0 h-12 w-full animate-bounce stroke-2" />
     </>
-  );
-};
+  )
+}
 
-export default Welcome;
+export default Welcome
