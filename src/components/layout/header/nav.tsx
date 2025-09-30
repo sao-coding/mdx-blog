@@ -51,6 +51,7 @@ const Nav = ({
       parentIcon?: Icon
       childHref?: string
       hasChildren: boolean
+      active?: boolean
       // 添加一個穩定的 key 來避免動畫重新觸發
       stableKey: string
       // 添加 parentIndex 來幫助查找原始項目
@@ -58,13 +59,19 @@ const Nav = ({
     }> = []
 
     NAV_LINKS.forEach((link, index) => {
-      // 檢查是否有子項目被激活且需要顯示
+      // 檢查是否有子項目被激活且需要顯示（僅精確比對子項目）
       const activeChild = link.children?.find(
         (child) => child.show && pathname === child.href
       )
 
+      // 檢查父路由是否為當前路徑的前綴（例如 /posts/slug 或 /notes/:id）
+      const isParentActive =
+        Boolean(link.href) &&
+        (pathname === link.href ||
+          (link.href !== '/' && pathname.startsWith(`${link.href}/`)))
+
       if (activeChild) {
-        // 如果有激活的子項目，顯示子項目
+        // 如果有精確匹配的子項目，顯示子項目（並標記為 active）
         itemsToShow.push({
           icon: activeChild.icon || link.icon,
           href: link.href,
@@ -76,9 +83,10 @@ const Nav = ({
           // 使用父項目的 index 作為穩定的 key
           stableKey: `parent-${index}`,
           parentIndex: index,
+          active: true,
         })
       } else {
-        // 否則顯示父項目
+        // 否則顯示父項目；如果 pathname 為父路由的前綴則標記為 active
         itemsToShow.push({
           icon: link.icon,
           href: link.href,
@@ -88,6 +96,7 @@ const Nav = ({
           // 使用自身的 href 或 index 作為穩定的 key
           stableKey: link.href || `parent-${index}`,
           parentIndex: index,
+          active: isParentActive,
         })
       }
     })
@@ -205,9 +214,8 @@ const Nav = ({
       <LayoutGroup>
         <nav className="flex items-center relative">
           {getNavItemsToShow().map((item) => {
-            const isActive = item.isChild
-              ? pathname === item.childHref
-              : item.href && pathname === item.href
+            // 使用在 getNavItemsToShow 中計算的 active 標記，支援子項目精確匹配與父路由前綴匹配
+            const isActive = Boolean(item.active)
 
             // 使用 parentIndex 來正確查找原始項目
             const originalLink = NAV_LINKS[item.parentIndex]
