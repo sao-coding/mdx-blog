@@ -41,7 +41,7 @@ const Welcome = () => {
                 key={social.link}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: [20, -15, 0] }}
-                transition={{ delay: 1 + index * 0.2, duration: 0.6 }}
+                transition={{ delay: 3 + index * 0.2, duration: 0.6 }}
               >
                 <Link
                   href={social.link}
