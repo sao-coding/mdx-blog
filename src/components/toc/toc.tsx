@@ -1,94 +1,46 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
-
-export interface TocItem {
-  value: string
-  href?: string
-  depth?: number
-  numbering?: number[]
-  parent?: string
-  children?: TocItem[]
-}
-
-export interface TableOfContentProps {
-  toc?: TocItem[]
-}
+import React, { useEffect, useRef, useState } from 'react'
+import { TocItem } from '@/types/toc'
+import TocList from './toc-list'
+import useScrollspy from '@/hooks/use-scrollspy'
 
 /**
- * 產生目錄列表的遞迴渲染。
- * - 以 depth 決定縮排與文字樣式，numbering 顯示章節編號。
- * @param items 要渲染的 TocItem 陣列
+ * Recursively extracts IDs from TOC items.
+ * @param items - The array of TOC items.
+ * @returns An array of IDs.
  */
-function renderToc(items: TocItem[] = []) {
-  const getTextClass = (depth?: number) => {
-    switch (depth) {
-      case 1:
-        return 'font-medium text-slate-900 dark:text-slate-100'
-      case 2:
-        return 'text-slate-700 dark:text-slate-300'
-      case 3:
-        return 'text-slate-600 dark:text-slate-400'
-      default:
-        return 'text-slate-600 dark:text-slate-400'
+const getIds = (items: TocItem[]): string[] => {
+  return items.reduce((acc: string[], item) => {
+    if (item.href) {
+      // remove '#' from href
+      acc.push(item.href.slice(1))
     }
-  }
-
-  return (
-    <>
-      {items.map((item) => {
-        const depth = item.depth ?? 1
-        const paddingLeft = Math.max(depth - 1, 0) * 12 // px
-        return (
-          <li
-            key={item.href || item.value}
-            className={`toc-item`}
-            style={{ paddingLeft }}
-          >
-            <a
-              href={item.href}
-              className={`flex items-start gap-2 group leading-normal truncate ${getTextClass(
-                depth
-              )}`}
-            >
-              {/* {item.numbering ? (
-                <span className="flex-none tabular-nums text-slate-500 dark:text-slate-400 text-[0.85em]">
-                  {item.numbering.join('.')}.
-                </span>
-              ) : null} */}
-              <span className="truncate group-hover:text-primary transition-colors">
-                {item.value}
-              </span>
-            </a>
-
-            {item.children && item.children.length > 0 && (
-              <div className="mt-2">{renderToc(item.children)}</div>
-            )}
-          </li>
-        )
-      })}
-    </>
-  )
+    if (item.children) {
+      acc.push(...getIds(item.children))
+    }
+    return acc
+  }, [])
 }
 
 /**
  * TableOfContent 元件
  * - 顯示文章目錄，支援多層縮排與分級字級
  */
-export const TableOfContent: React.FC<TableOfContentProps> = ({ toc }) => {
+export const TableOfContent = ({ toc }: { toc: TocItem[] }) => {
   const containerRef = useRef<HTMLUListElement>(null)
+  const [ids, setIds] = useState<string[]>([])
 
   useEffect(() => {
-    // const setMaxWidth = throttle(() => {
-    //   if (containerRef.current) {
-    //     containerRef.current.style.maxWidth = `${
-    //       window.innerWidth -
-    //       containerRef.current.getBoundingClientRect().x -
-    //       30
-    //     }px`
-    //   }
-    // }, 14)
+    const newIds = getIds(toc)
+    setIds(newIds)
+  }, [toc])
 
+  const activeId = useScrollspy(ids, {
+    rootMargin: '0% 0% -85% 0%',
+  })
+
+  useEffect(() => {
     const setMaxWidth = () => {
       if (containerRef.current) {
         containerRef.current.style.maxWidth = `${
@@ -113,8 +65,8 @@ export const TableOfContent: React.FC<TableOfContentProps> = ({ toc }) => {
     <aside className="sticky top-20 self-start">
       <div className="relative h-full" aria-label="Table of contents">
         <div className="max-h-[60vh] overflow-auto absolute">
-          <ul ref={containerRef} className="toc-list space-y-2">
-            {renderToc(toc)}
+          <ul ref={containerRef} className="toc-list space-y-2 relative">
+            <TocList items={toc} activeId={activeId} />
           </ul>
         </div>
       </div>
@@ -123,4 +75,3 @@ export const TableOfContent: React.FC<TableOfContentProps> = ({ toc }) => {
 }
 
 export default TableOfContent
-// ...existing code...

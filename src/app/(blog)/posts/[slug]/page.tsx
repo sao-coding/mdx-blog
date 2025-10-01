@@ -111,7 +111,7 @@ export default async function Page({
           </article>
         </div>
         <div className="relative hidden lg:block">
-          {showToc && <TableOfContent toc={scope.toc} />}
+          {showToc && <TableOfContent toc={scope.toc || []} />}
         </div>
       </div>
     </div>
