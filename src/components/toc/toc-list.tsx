@@ -22,21 +22,20 @@ const getTextClass = (depth?: number, isActive?: boolean) => {
 export const TocList: React.FC<{
   items?: TocItem[]
   activeId?: string
-}> = ({ items = [], activeId }) => {
+  rootDepth?: number
+}> = ({ items = [], activeId, rootDepth = 1 }) => {
   if (!items || items.length === 0) return null
 
   return (
     <>
       {items.map((item) => {
         const depth = item.depth ?? 1
-        const paddingLeft = Math.max(depth - 1, 0) * 12 // px
+        const renderDepth = depth - rootDepth
+        const paddingLeft =
+          depth >= rootDepth ? `${renderDepth * 0.6 + 0.5}rem` : '0.5rem'
         const isActive = activeId === item.href?.slice(1)
         return (
-          <li
-            key={item.href || item.value}
-            className={`toc-item relative`}
-            style={{ paddingLeft }}
-          >
+          <li key={item.href || item.value} className={`toc-item relative`}>
             {isActive && (
               <m.span
                 layoutId="active-toc-item"
@@ -56,6 +55,7 @@ export const TocList: React.FC<{
                 getTextClass(depth, isActive),
                 { 'ml-2': isActive }
               )}
+              style={{ paddingLeft }}
             >
               <span className="truncate group-hover:text-primary transition-colors">
                 {item.value}
@@ -64,7 +64,11 @@ export const TocList: React.FC<{
 
             {item.children && item.children.length > 0 && (
               <div className="mt-2">
-                <TocList items={item.children} activeId={activeId} />
+                <TocList
+                  items={item.children}
+                  activeId={activeId}
+                  rootDepth={rootDepth}
+                />
               </div>
             )}
           </li>

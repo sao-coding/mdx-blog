@@ -1,10 +1,23 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { TocItem } from '@/types/toc'
 import TocList from './toc-list'
 import useScrollspy from '@/hooks/use-scrollspy'
 import { LayoutGroup } from 'motion/react'
+
+const getMinDepth = (items: TocItem[]): number => {
+  let min = Infinity
+  for (const item of items) {
+    if (item.depth) {
+      min = Math.min(min, item.depth)
+    }
+    if (item.children && item.children.length > 0) {
+      min = Math.min(min, getMinDepth(item.children))
+    }
+  }
+  return min
+}
 
 /**
  * Recursively extracts IDs from TOC items.
@@ -37,6 +50,12 @@ export const TableOfContent = ({ toc }: { toc: TocItem[] }) => {
     setIds(newIds)
   }, [toc])
 
+  const rootDepth = useMemo(() => {
+    if (!toc || toc.length === 0) return 1
+    const minDepth = getMinDepth(toc)
+    return minDepth === Infinity ? 1 : minDepth
+  }, [toc])
+
   const activeId = useScrollspy(ids, {
     rootMargin: '0% 0% -85% 0%',
   })
@@ -63,12 +82,12 @@ export const TableOfContent = ({ toc }: { toc: TocItem[] }) => {
 
   return (
     // 這裡加入 sticky 與 top 偏移，讓目錄在滾動時固定顯示
-    <aside className="sticky top-20 self-start">
+    <aside className="sticky top-[120px]">
       <div className="relative h-full" aria-label="Table of contents">
         <div className="max-h-[60vh] overflow-auto absolute">
           <LayoutGroup>
-            <ul ref={containerRef} className="toc-list space-y-2 relative">
-              <TocList items={toc} activeId={activeId} />
+            <ul ref={containerRef} className="px-2 space-y-2 relative">
+              <TocList items={toc} activeId={activeId} rootDepth={rootDepth} />
             </ul>
           </LayoutGroup>
         </div>
