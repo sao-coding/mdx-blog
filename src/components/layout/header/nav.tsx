@@ -212,7 +212,7 @@ const Nav = ({
       />
 
       <LayoutGroup>
-        <nav className="flex items-center relative">
+        <div className="flex items-center relative">
           {getNavItemsToShow().map((item) => {
             // 使用在 getNavItemsToShow 中計算的 active 標記，支援子項目精確匹配與父路由前綴匹配
             const isActive = Boolean(item.active)
@@ -405,7 +405,7 @@ const Nav = ({
               </m.div>
             )
           })}
-        </nav>
+        </div>
       </LayoutGroup>
     </nav>
   )
