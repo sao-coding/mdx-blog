@@ -155,8 +155,21 @@
   * {
     @apply border-border;
   }
+  /* default root font-size for the site (14px) */
+  html {
+    font-size: 14px;
+  }
+
+  /* Prefer pure-CSS parent query where supported. If the document
+     contains an element with class `admin` (e.g. <div class="admin">)
+     some browsers support matching the root with :has(). This lets us
+     change rem scale purely with CSS when available. */
+  html:has(.admin) {
+    font-size: 16px;
+  }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 }
 
@@ -213,7 +226,7 @@
 
 /* 主要內容 */
 .fill-content {
-  min-height: calc(100vh - 17.5rem);
+  min-height: calc(100vh - 12.5rem);
 }
 
 @layer components {

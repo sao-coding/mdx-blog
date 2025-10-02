@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator'
 import { AdminBreadcrumb } from './_components/layout/admin-breadcrumb'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import Script from 'next/script'
 
 const getAuth = async () => {
   const cookieStore = await cookies()
@@ -33,19 +34,21 @@ export default async function AdminLayout({
     redirect('/login')
   }
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-[orientation=vertical]:h-4"
-          />
-          <AdminBreadcrumb />
-        </header>
-        <div className="p-4">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="admin">
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
+            <AdminBreadcrumb />
+          </header>
+          <div className="p-4">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   )
 }
