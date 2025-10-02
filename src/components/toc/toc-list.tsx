@@ -41,7 +41,12 @@ export const TocList: React.FC<{
               <m.span
                 layoutId="active-toc-item"
                 className="absolute inset-y-0 left-0 w-0.5 rounded-r-lg bg-primary"
-                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 200,
+                  damping: 20,
+                  duration: 0.5,
+                }}
               />
             )}
             <a
