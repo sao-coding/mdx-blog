@@ -4,7 +4,7 @@ import { use } from 'react'
 import NoteEditor from '../../_components/editor/note-editor'
 import { useQuery } from '@tanstack/react-query'
 import { ApiResponse } from '@/types/api'
-import { Note } from '@/types/note'
+import { Note, NoteItem } from '@/types/note'
 
 const NoteEditorByIdPage = ({
   params,
@@ -13,7 +13,7 @@ const NoteEditorByIdPage = ({
 }) => {
   const { id } = use(params)
 
-  const { data: noteData } = useQuery<ApiResponse<Note>>({
+  const { data: noteData } = useQuery<ApiResponse<NoteItem>>({
     queryKey: ['note', id],
     queryFn: async () => {
       const res = await fetch(
