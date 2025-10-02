@@ -40,15 +40,16 @@ export const TocList: React.FC<{
             {isActive && (
               <m.span
                 layoutId="active-toc-item"
-                layout
                 className="absolute inset-y-0 left-0 w-0.5 rounded-r-lg bg-primary"
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
               />
             )}
             <a
               href={item.href}
               className={cn(
-                'flex items-start gap-2 group leading-normal truncate',
-                getTextClass(depth, isActive)
+                'flex items-start gap-2 group leading-normal truncate transition-all duration-200',
+                getTextClass(depth, isActive),
+                { 'ml-2': isActive }
               )}
             >
               <span className="truncate group-hover:text-primary transition-colors">

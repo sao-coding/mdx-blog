@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { TocItem } from '@/types/toc'
 import TocList from './toc-list'
 import useScrollspy from '@/hooks/use-scrollspy'
+import { LayoutGroup } from 'motion/react'
 
 /**
  * Recursively extracts IDs from TOC items.
@@ -65,9 +66,11 @@ export const TableOfContent = ({ toc }: { toc: TocItem[] }) => {
     <aside className="sticky top-20 self-start">
       <div className="relative h-full" aria-label="Table of contents">
         <div className="max-h-[60vh] overflow-auto absolute">
-          <ul ref={containerRef} className="toc-list space-y-2 relative">
-            <TocList items={toc} activeId={activeId} />
-          </ul>
+          <LayoutGroup>
+            <ul ref={containerRef} className="toc-list space-y-2 relative">
+              <TocList items={toc} activeId={activeId} />
+            </ul>
+          </LayoutGroup>
         </div>
       </div>
     </aside>

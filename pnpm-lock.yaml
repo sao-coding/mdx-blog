@@ -107,6 +107,9 @@ importers:
       katex:
         specifier: ^0.16.22
         version: 0.16.22
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       lucide-react:
         specifier: ^0.539.0
         version: 0.539.0(react@19.1.1)
@@ -195,6 +198,9 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.87.1
         version: 5.87.1(@tanstack/react-query@5.87.1(react@19.1.1))(react@19.1.1)
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: ^20.19.13
         version: 20.19.13
