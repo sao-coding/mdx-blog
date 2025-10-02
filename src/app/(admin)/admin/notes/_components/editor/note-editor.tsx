@@ -46,7 +46,7 @@ import {
 } from '../../_actions/notes-actions'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Note, NoteItem } from '@/types/note'
-import { Topic } from '@/types/topic'
+import { TopicItem } from '@/types/topic'
 import { ApiResponse } from '@/types/api'
 
 const moodOptions = [
@@ -73,7 +73,7 @@ const NoteEditor = ({ noteData }: { noteData?: NoteItem }) => {
   const isMobile = useIsMobile()
 
   const { data: topicsData, isLoading: isLoadingTopics } = useQuery<
-    ApiResponse<Topic[]>
+    ApiResponse<TopicItem[]>
   >({
     queryKey: ['topics'],
     queryFn: async () => {

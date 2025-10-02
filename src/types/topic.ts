@@ -1,5 +1,5 @@
 // src/types/topic.ts
-export interface Topic {
+export interface TopicItem {
   id: string
   name: string
   slug: string
