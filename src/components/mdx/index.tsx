@@ -1,6 +1,15 @@
 import React from 'react'
 import type { MDXComponents } from 'next-mdx-remote-client/rsc'
 import { Echarts, Mermaid, Count, CustomQuote } from './renderers'
+import {
+  Glimpse,
+  GlimpseContent,
+  GlimpseDescription,
+  GlimpseImage,
+  GlimpseTitle,
+  GlimpseTrigger,
+} from '../kibo-ui/glimpse'
+import { cn } from '@/lib/utils'
 
 // 匯出個別 renderers
 export { Mermaid, Echarts, Count }
@@ -31,6 +40,49 @@ export const defaultMDXComponents: MDXComponents = {
   h6: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h6 className="scroll-mt-20" {...props} />
   ),
+  a: async (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+    const href = props.href ?? ''
+
+    // 預設 preview 資料
+    let data: {
+      title: string | null
+      description: string | null
+      image: string | null
+    } = {
+      title: null,
+      description: null,
+      image: null,
+    }
+
+    // 僅對外部 HTTP/HTTPS 連結嘗試抓取 preview（server helper）
+    if (href && /^https?:\/\//.test(href)) {
+      try {
+        // 動態載入 server helper 並抓取預覽資料（只在 server side 執行）
+        const { glimpse } = await import('../kibo-ui/glimpse/server')
+        data = await glimpse(href)
+      } catch (e) {
+        console.error('Failed to fetch link preview for', href, e)
+      }
+    }
+
+    return (
+      <Glimpse closeDelay={0} openDelay={0}>
+        <GlimpseTrigger asChild>
+          <a className="text-blue-600 hover:underline" {...props} />
+        </GlimpseTrigger>
+        <GlimpseContent className={cn(!data.image && 'w-full p-2')}>
+          {!data.image && <span>{href}</span>}
+          {data.image && (
+            <>
+              <GlimpseImage src={data.image} alt={data.title ?? ''} />
+              <GlimpseTitle>{data.title}</GlimpseTitle>
+              <GlimpseDescription>{data.description}</GlimpseDescription>
+            </>
+          )}
+        </GlimpseContent>
+      </Glimpse>
+    )
+  },
   code: ({
     className,
     children,
