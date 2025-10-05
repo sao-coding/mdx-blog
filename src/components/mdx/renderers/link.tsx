@@ -23,9 +23,9 @@ const EnhancedLink = ({ href, data, ...props }: EnhancedLinkProps) => {
   return (
     <Glimpse closeDelay={100} openDelay={0}>
       <GlimpseTrigger asChild>
-        <span className="inline-flex items-center align-top [&_svg]:size-4 space-x-1 mx-1">
+        <span className="inline-flex items-center align-top [&_svg]:size-4 space-x-1">
           {href.includes('github.com') && (
-            <span className="inline-flex items-center">
+            <span className="inline-flex items-center ml-1">
               <SiGithub />
             </span>
           )}
