@@ -1,8 +1,8 @@
 .sao-link {
   @apply underline decoration-[oklch(0.2103_0.0059_285.89_/_.2)] underline-offset-3;
-  @apply bg-linear-to-r from-teal-500 to-teal-500 bg-size-[0_1.5px] bg-left-bottom bg-no-repeat;
+  @apply bg-linear-to-r from-teal-500 to-teal-500 bg-size-[0_1.5px] bg-no-repeat bg-[left_1.5em];
   @apply transition-all duration-250;
-  @apply hover:bg-size-[100%_1.5px];
+  @apply hover:bg-size-[100%_1.5px] hover:no-underline;
   @variant dark {
     @apply decoration-[oklch(0.9674_0.0013_286.37_/_.2)];
   }

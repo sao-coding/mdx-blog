@@ -11,6 +11,7 @@ import {
 } from '../kibo-ui/glimpse'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import EnhancedLink from './renderers/link'
 
 // 匯出個別 renderers
 export { Mermaid, Echarts, Count }
@@ -66,27 +67,7 @@ export const defaultMDXComponents: MDXComponents = {
       }
     }
 
-    return (
-      <Glimpse closeDelay={100} openDelay={0}>
-        <GlimpseTrigger asChild>
-          <Link className="sao-link" href={href} {...props} />
-        </GlimpseTrigger>
-        <GlimpseContent className={cn(!data.image && 'w-full p-2')}>
-          {!data.image && (
-            <Link className="sao-link" href={href}>
-              {href}
-            </Link>
-          )}
-          {data.image && (
-            <>
-              <GlimpseImage src={data.image} alt={data.title ?? ''} />
-              <GlimpseTitle>{data.title}</GlimpseTitle>
-              <GlimpseDescription>{data.description}</GlimpseDescription>
-            </>
-          )}
-        </GlimpseContent>
-      </Glimpse>
-    )
+    return <EnhancedLink href={href} data={data} {...props} />
   },
   code: ({
     className,
