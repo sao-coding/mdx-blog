@@ -24,7 +24,7 @@ const EnhancedLink = ({ href, data, ...props }: EnhancedLinkProps) => {
     <Glimpse closeDelay={100} openDelay={0}>
       <GlimpseTrigger asChild>
         <span className="inline-flex items-center align-top [&_svg]:size-4">
-          {href.includes('github.com') && (
+          {href.includes('https://github.com') && (
             <span className="inline-flex items-center mx-1">
               <SiGithub />
             </span>
@@ -34,7 +34,7 @@ const EnhancedLink = ({ href, data, ...props }: EnhancedLinkProps) => {
       </GlimpseTrigger>
       <GlimpseContent className={cn(!data.image && 'w-full p-2')}>
         {!data.image && (
-          <Link className="sao-link" href={href}>
+          <Link className="sao-link block" href={href}>
             {href}
           </Link>
         )}
