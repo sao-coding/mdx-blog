@@ -2,19 +2,9 @@
 @plugin "@tailwindcss/typography";
 @import 'katex/dist/katex.min.css';
 @import 'tw-animate-css';
+@import './custom.css';
 
 @custom-variant dark (&:is(.dark *));
-
-/* classname prose 裡面 的 pre 裡面 的 div 若是 mermaid 或 echarts 的話，則pre 無背景 */
-.prose pre:has(> div.mermaid),
-.prose pre:has(> div.echarts) {
-  background-color: transparent;
-}
-
-.prose pre > div.echarts {
-  overflow: hidden;
-  border-radius: 0.5rem;
-}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -190,6 +180,17 @@
   }
 }
 
+/* classname prose 裡面 的 pre 裡面 的 div 若是 mermaid 或 echarts 的話，則pre 無背景 */
+.prose pre:has(> div.mermaid),
+.prose pre:has(> div.echarts) {
+  background-color: transparent;
+}
+
+.prose pre > div.echarts {
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
 /* 卷軸樣式 只有在電腦版才會出現 */
 
 @media screen and (min-width: 768px) {
@@ -266,66 +267,68 @@
   }
 }
 
-/* Added timeline CSS using :before for line and :after for dots */
-.timeline-list {
-  position: relative;
-  min-width: 0;
-  flex: 1 1 0%;
-  list-style-position: inside;
-}
+@layer components {
+  /* Added timeline CSS using :before for line and :after for dots */
+  .timeline-list {
+    position: relative;
+    min-width: 0;
+    flex: 1 1 0%;
+    list-style-position: inside;
+  }
 
-.timeline-list > li {
-  position: relative;
-  list-style-type: none;
-  line-height: 1.6;
-  padding: 3px 0;
-  margin: 0 0 0 1rem;
-}
+  .timeline-list > li {
+    position: relative;
+    list-style-type: none;
+    line-height: 1.6;
+    padding: 3px 0;
+    margin: 0 0 0 1rem;
+  }
 
-/* Timeline line using :before */
-.timeline-list > li:before {
-  content: '';
-  position: absolute;
-  left: -19px;
-  bottom: 0;
-  border-left: 2px solid var(--color-timeline-line);
-}
+  /* Timeline line using :before */
+  .timeline-list > li:before {
+    content: '';
+    position: absolute;
+    left: -19px;
+    bottom: 0;
+    border-left: 2px solid var(--color-timeline-line);
+  }
 
-/* Single item - no line */
-/* .timeline-item:first-child:last-child:before { */
-.timeline-list > li:first-child:last-child:before {
-  border-left: 0;
-}
+  /* Single item - no line */
+  /* .timeline-item:first-child:last-child:before { */
+  .timeline-list > li:first-child:last-child:before {
+    border-left: 0;
+  }
 
-/* Middle items - full height line */
-/* .timeline-item:not(:first-child):not(:last-child):before { */
-.timeline-list > li:not(:first-child):not(:last-child):before {
-  top: 0;
-}
+  /* Middle items - full height line */
+  /* .timeline-item:not(:first-child):not(:last-child):before { */
+  .timeline-list > li:not(:first-child):not(:last-child):before {
+    top: 0;
+  }
 
-/* First item - line starts from 50% */
-/* .timeline-item:first-child:before { */
-.timeline-list > li:first-child:before {
-  top: 50%;
-}
+  /* First item - line starts from 50% */
+  /* .timeline-item:first-child:before { */
+  .timeline-list > li:first-child:before {
+    top: 50%;
+  }
 
-/* Last item - line ends at 50% */
-/* .timeline-item:last-child:before { */
-.timeline-list > li:last-child:before {
-  bottom: 50%;
-  top: 0;
-}
+  /* Last item - line ends at 50% */
+  /* .timeline-item:last-child:before { */
+  .timeline-list > li:last-child:before {
+    bottom: 50%;
+    top: 0;
+  }
 
-/* Timeline dots using :after */
-/* .timeline-item:after { */
-.timeline-list > li:after {
-  content: '';
-  left: calc(-1rem - 6px);
-  top: 50%;
-  transform: translateY(-50%);
-  height: 8px;
-  width: 8px;
-  border-radius: 50%;
-  position: absolute;
-  background-color: var(--color-timeline-dot);
+  /* Timeline dots using :after */
+  /* .timeline-item:after { */
+  .timeline-list > li:after {
+    content: '';
+    left: calc(-1rem - 6px);
+    top: 50%;
+    transform: translateY(-50%);
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    position: absolute;
+    background-color: var(--color-timeline-dot);
+  }
 }
