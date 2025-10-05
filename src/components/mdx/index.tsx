@@ -21,7 +21,7 @@ export const defaultMDXComponents: MDXComponents = {
   wrapper: function Wrapper({
     children,
   }: React.ComponentPropsWithoutRef<'div'>) {
-    return <div className="mdx-wrapper">{children}</div>
+    return <div className="mdx-wrapper text-lg">{children}</div>
   },
   /* 為所有標題加上 scroll-margin-top（對應 sticky top-20） */
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
