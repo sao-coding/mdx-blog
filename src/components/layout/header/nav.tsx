@@ -105,6 +105,12 @@ const Nav = ({
   }
 
   useEffect(() => {
+    // 路徑改變時，關閉所有下拉選單
+    setOpenDropdown(null)
+    setHoveredItem(null)
+  }, [pathname])
+
+  useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     setPrefersReducedMotion(mediaQuery.matches)
 
@@ -386,6 +392,14 @@ const Nav = ({
                             <Link
                               key={child.href}
                               href={child.href}
+                              onClick={() => {
+                                if (dropdownTimeoutRef.current) {
+                                  clearTimeout(dropdownTimeoutRef.current)
+                                  dropdownTimeoutRef.current = null
+                                }
+                                setOpenDropdown(null)
+                                setHoveredItem(null)
+                              }}
                               className="block px-4 py-2 text-sm text-gray-300 hover:text-teal-400 hover:bg-gray-700/50 transition-all duration-200"
                             >
                               {child.icon && (
