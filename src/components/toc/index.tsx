@@ -5,6 +5,7 @@ import { TocItem } from '@/types/toc'
 import TocList from './toc-list'
 import useScrollspy from '@/hooks/use-scrollspy'
 import { LayoutGroup } from 'motion/react'
+import { ScrollProgressIndicator } from '../scroll-progress-indicator'
 
 const getMinDepth = (items: TocItem[]): number => {
   let min = Infinity
@@ -41,7 +42,14 @@ const getIds = (items: TocItem[]): string[] => {
  * TableOfContent 元件
  * - 顯示文章目錄，支援多層縮排與分級字級
  */
-export const TableOfContent = ({ toc }: { toc: TocItem[] }) => {
+// export const TableOfContent = ({ toc }: { toc: TocItem[] }) => {
+const TableOfContent = ({
+  toc,
+  targetRef,
+}: {
+  toc: TocItem[]
+  targetRef: React.RefObject<HTMLElement | null>
+}) => {
   const containerRef = useRef<HTMLUListElement>(null)
   const [ids, setIds] = useState<string[]>([])
 
@@ -66,7 +74,7 @@ export const TableOfContent = ({ toc }: { toc: TocItem[] }) => {
         containerRef.current.style.maxWidth = `${
           window.innerWidth -
           containerRef.current.getBoundingClientRect().x -
-          30
+          60
         }px`
       }
     }
@@ -82,14 +90,15 @@ export const TableOfContent = ({ toc }: { toc: TocItem[] }) => {
 
   return (
     // 這裡加入 sticky 與 top 偏移，讓目錄在滾動時固定顯示
-    <aside className="sticky top-[120px]">
+    <aside className="sticky top-[120px]  h-[calc(100vh-6rem-4.5rem-150px-120px)]">
       <div className="relative h-full" aria-label="Table of contents">
-        <div className="max-h-[60vh] overflow-auto absolute">
+        <div className="max-h-[60vh] overflow-auto absolute flex flex-col">
           <LayoutGroup>
             <ul ref={containerRef} className="px-2 space-y-2 relative">
               <TocList items={toc} activeId={activeId} rootDepth={rootDepth} />
             </ul>
           </LayoutGroup>
+          <ScrollProgressIndicator target={targetRef} />
         </div>
       </div>
     </aside>

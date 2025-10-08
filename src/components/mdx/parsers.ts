@@ -36,13 +36,14 @@ const getMdxOptions = (source: string): EvaluateOptions<Scope> => ({
 // 較輕量的 MDX 配置（用於日記/備註，只需要 GFM 與 slug）
 export const getBasicMdxOptions = (source: string): EvaluateOptions<Scope> => ({
   mdxOptions: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkFlexibleToc],
     rehypePlugins: [rehypeSlug],
   },
   parseFrontmatter: true,
   scope: {
     readingTime: calculateSomeHow(source),
   },
+  vfileDataIntoScope: 'toc', // 這行會把 toc 注入 scope.toc
 })
 
 export default getMdxOptions

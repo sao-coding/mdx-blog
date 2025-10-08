@@ -1,14 +1,12 @@
-import { Suspense } from 'react'
 import { evaluate } from 'next-mdx-remote-client/rsc'
-import type { EvaluateOptions } from 'next-mdx-remote-client/rsc'
 import type { Metadata, ResolvingMetadata } from 'next'
-import { ErrorComponent, LoadingComponent } from '@/components/index'
-import TableOfContent from '@/components/toc'
-import { MdxRenderer, components } from '@/components/mdx/mdx-renderer'
+import { ErrorComponent } from '@/components/index'
+import { components } from '@/components/mdx/mdx-renderer'
 import getMdxOptions from '@/components/mdx/parsers'
 import type { TocItem } from 'remark-flexible-toc'
 import { ApiResponse } from '@/types/api'
 import { PostItem } from '@/types/post'
+import { PostClientPage } from './_components/post-client-page'
 
 type Scope = {
   readingTime: string
@@ -94,26 +92,15 @@ export default async function Page({
     components: components,
   })
 
-  // console.log('Frontmatter:', frontmatter)
-  // console.log('Scope:', scope)
-
   if (error) {
     return <ErrorComponent error={error.message} />
   }
-  // console.log('TOC:', scope.toc)
+
   const showToc = frontmatter.showToc !== false
+
   return (
-    <div className="container m-auto mt-[120px] max-w-7xl px-2 md:px-6 lg:px-4 xl:px-0">
-      <div className="relative flex min-h-[120px] grid-cols-[auto_200px] lg:grid">
-        <div className="min-w-0">
-          <article className="prose dark:prose-invert max-w-full">
-            <MdxRenderer content={content} error={error} />
-          </article>
-        </div>
-        <div className="relative hidden lg:block">
-          {showToc && <TableOfContent toc={scope.toc || []} />}
-        </div>
-      </div>
-    </div>
+    <PostClientPage showToc={showToc} toc={scope.toc || []}>
+      {content}
+    </PostClientPage>
   )
 }
