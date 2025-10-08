@@ -97,7 +97,6 @@ export default async function Page() {
 
   return (
     <main className="prose mx-auto py-8">
-      {showToc && <TableOfContent toc={scope.toc || []} />}
       <Suspense fallback={<LoadingComponent />}>{content}</Suspense>
     </main>
   )
