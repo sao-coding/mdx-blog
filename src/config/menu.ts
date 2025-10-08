@@ -2,6 +2,7 @@ import {
   IconBrandLine,
   IconBrandThreads,
   IconBrandX,
+  IconFenceFilled,
   IconHistory,
   IconPencil,
 } from '@tabler/icons-react'
@@ -57,6 +58,14 @@ export const NAV_LINKS: NavLinks = [
     icon: IconHistory,
     href: '/timeline',
     text: '時光',
+    children: [
+      {
+        icon: IconFenceFilled,
+        href: '/notes/topics',
+        text: '專欄',
+        show: true,
+      },
+    ],
   },
   // 更多
   {
