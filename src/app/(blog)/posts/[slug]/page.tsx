@@ -70,9 +70,10 @@ export default async function Page({
   const { slug } = await params
   // console.log('Fetching post data for slug:', slug)
   let source: string | null = null
+  let data: PostItem
   try {
     // await new Promise((resolve) => setTimeout(resolve, 2000))
-    const data = await getPostData(slug)
+    data = await getPostData(slug)
     source = data.content
     // console.log('MDX source:', source)
   } catch (err) {
@@ -99,7 +100,16 @@ export default async function Page({
   const showToc = frontmatter.showToc !== false
 
   return (
-    <PostClientPage showToc={showToc} toc={scope.toc || []}>
+    <PostClientPage
+      showToc={showToc}
+      toc={scope.toc || []}
+      metaData={{
+        category: data.category.name,
+        tags: data.tags.map((tag) => tag.name),
+        title: frontmatter.title,
+        url: `/posts/${slug}`,
+      }}
+    >
       {content}
     </PostClientPage>
   )

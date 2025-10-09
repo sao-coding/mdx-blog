@@ -1,22 +1,41 @@
 'use client'
 
-import { useRef, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import TableOfContent from '@/components/toc'
 import { ScrollProgressIndicator } from '@/components/scroll-progress-indicator'
 import type { TocItem } from 'remark-flexible-toc'
+import { useHeaderStore } from '@/store/header-store'
 
 type PostClientPageProps = {
   children: ReactNode
   showToc: boolean
   toc: TocItem[]
+  metaData: {
+    category: string
+    tags: string[]
+    title: string
+    url: string
+  }
 }
 
 export function PostClientPage({
   children,
   showToc,
   toc,
+  metaData,
 }: PostClientPageProps) {
   const targetRef = useRef<HTMLDivElement | null>(null)
+  const { setPostState } = useHeaderStore()
+
+  useEffect(() => {
+    // 設定 header 狀態
+    setPostState({
+      category: metaData.category,
+      tags: metaData.tags,
+      title: metaData.title,
+      url: metaData.url,
+    })
+  }, [metaData])
 
   return (
     <div className="container m-auto mt-[120px] max-w-7xl px-2 md:px-6 lg:px-4 xl:px-0">
