@@ -125,7 +125,7 @@ const PostItem = ({ post, options = {} }: PostItemProps) => {
             <HashIcon className="size-4" />
             <div className="truncate">
               <button
-                className="hover:underline"
+                className="sao-link"
                 onClick={() => router.push(`/categories/${post.category.slug}`)}
               >
                 {post.category.name}
@@ -134,7 +134,7 @@ const PostItem = ({ post, options = {} }: PostItemProps) => {
               {post.tags.map((tag, index) => (
                 <span key={tag.slug} className="inline">
                   <button
-                    className="hover:underline"
+                    className="sao-link"
                     onClick={() => router.push(`/tags/${tag.slug}`)}
                   >
                     {tag.name}
