@@ -10,7 +10,7 @@ import { useHeaderStore } from '@/store/header-store'
 
 const Header = () => {
   const pathname = usePathname()
-  const { postState } = useHeaderStore()
+  const { postState, noteState } = useHeaderStore()
 
   // 合併為單一狀態對象,確保狀態同步更新
   const [scrollState, setScrollState] = useState({
@@ -132,6 +132,11 @@ const Header = () => {
           {postState && showBackground && (
             <div className="absolute w-full lg:px-16">
               <div className="text-lg truncate">{postState.title}</div>
+            </div>
+          )}
+          {noteState && showBackground && (
+            <div className="absolute w-full lg:px-16">
+              <div className="text-lg truncate">{noteState.title}</div>
             </div>
           )}
         </div>
