@@ -1,5 +1,5 @@
 'use client'
-// FIXME:卷軸滾動會閃爍
+
 import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -10,72 +10,103 @@ import { useHeaderStore } from '@/store/header-store'
 
 const Header = () => {
   const pathname = usePathname()
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isScrollingUp, setIsScrollingUp] = useState(false)
-  const { postState, noteState } = useHeaderStore()
+  const { postState } = useHeaderStore()
+
+  // 合併為單一狀態對象,確保狀態同步更新
+  const [scrollState, setScrollState] = useState({
+    isScrolled: false,
+    showPinnedNav: false,
+  })
+
+  // 滾動相關的 refs
+  const lastScrollYRef = useRef(0)
+  const scrollDirectionRef = useRef<'up' | 'down' | null>(null)
+  const tickingRef = useRef(false)
+
+  // 常量配置
+  const SCROLL_THRESHOLD = 50 // 判斷是否滾動的閾值
+  const DIRECTION_THRESHOLD = 10 // 判斷滾動方向的閾值(減小以提高響應速度)
 
   useEffect(() => {
-    let lastScrollY = window.scrollY
-    let ticking = false
+    lastScrollYRef.current = window.scrollY
 
     const handleScroll = () => {
-      if (ticking) return
-      ticking = true
+      if (tickingRef.current) return
+      tickingRef.current = true
+
       window.requestAnimationFrame(() => {
         const currentY = window.scrollY
+        const scrollDiff = currentY - lastScrollYRef.current
 
-        // Only update state if the value has changed to prevent unnecessary re-renders
-        setIsScrolled((prev) => {
-          const next = currentY > 80
-          return prev === next ? prev : next
+        // 計算新的滾動狀態
+        const newIsScrolled = currentY > SCROLL_THRESHOLD
+
+        // 更新滾動方向(只在滾動距離超過閾值時更新)
+        if (Math.abs(scrollDiff) > DIRECTION_THRESHOLD) {
+          scrollDirectionRef.current = scrollDiff > 0 ? 'down' : 'up'
+          lastScrollYRef.current = currentY
+        }
+
+        // 判斷是否為文章/筆記詳情頁
+        const isDetailPage =
+          pathname?.startsWith('/posts/') || pathname?.startsWith('/notes/')
+
+        // 計算是否顯示固定導航
+        const newShowPinnedNav =
+          isDetailPage && newIsScrolled && scrollDirectionRef.current === 'up'
+
+        // 只在狀態真正改變時才更新(避免不必要的重渲染)
+        setScrollState((prev) => {
+          if (
+            prev.isScrolled === newIsScrolled &&
+            prev.showPinnedNav === newShowPinnedNav
+          ) {
+            return prev
+          }
+          return {
+            isScrolled: newIsScrolled,
+            showPinnedNav: newShowPinnedNav,
+          }
         })
 
-        setIsScrollingUp((prev) => {
-          // Scrolling up
-          if (currentY < lastScrollY) {
-            return prev ? prev : true
-          }
-          // Scrolling down
-          if (currentY > lastScrollY) {
-            return !prev ? prev : false
-          }
-          return prev
-        })
-
-        lastScrollY = currentY
-        ticking = false
+        tickingRef.current = false
       })
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [isScrolled, isScrollingUp])
+  }, [pathname])
 
-  // Treat home, posts and notes pages as target pages that show the header background when scrolled
+  // 派生狀態計算
   const isTargetPage =
     pathname === '/' ||
     pathname?.startsWith('/posts') ||
     pathname?.startsWith('/notes')
-  const showBackground = isTargetPage && isScrolled
 
-  // When on a single post or note (e.g. '/posts/[slug]' or '/notes/[id]') and scrolled, hide the central Nav.
-  // Do NOT hide for list pages like '/posts' or '/notes'. We detect single pages by checking the trailing '/'.
-  const isPostsOrNotes =
+  const showBackground = isTargetPage && scrollState.isScrolled
+
+  const isDetailPage =
     pathname?.startsWith('/posts/') || pathname?.startsWith('/notes/')
 
-  // central Nav should be hidden on single post/note when header background is shown
+  // 中央導航的樣式
   const centralNavClass = cn(
-    isPostsOrNotes && isScrolled ? 'invisible' : 'visible'
+    'transition-all duration-300 ease-in-out',
+    isDetailPage && scrollState.isScrolled
+      ? 'opacity-0 -translate-y-1 pointer-events-none'
+      : 'opacity-100 translate-y-0'
   )
 
-  // pinned Nav appears on single post/note when background is shown and user scrolls up
-  const showPinnedNav = isPostsOrNotes && isScrolled && isScrollingUp
+  // 固定導航的樣式
   const pinnedNavClass = cn(
-    'fixed top-[3.375rem] left-1/2 -translate-x-1/2 z-50 bg-background/80 backdrop-blur-md',
-    // disable transitions that cause jitter when fixed
-    'transition-none'
+    'fixed top-[3.375rem] left-1/2 -translate-x-1/2 z-50',
+    'bg-background/80 backdrop-blur-md',
+    'transition-all duration-300 ease-in-out',
+    scrollState.showPinnedNav
+      ? 'opacity-100 translate-y-0'
+      : 'opacity-0 -translate-y-4 pointer-events-none'
   )
 
   return (
@@ -92,6 +123,7 @@ const Header = () => {
           <SiteOwnerAvatar />
           <DevicesStatus />
         </div>
+
         <div className="relative flex grow justify-center items-center">
           <Nav
             variant={showBackground ? 'integrated' : 'default'}
@@ -99,18 +131,21 @@ const Header = () => {
           />
           {postState && showBackground && (
             <div className="absolute w-full lg:px-16">
-              <div className="text-lg">{postState.title}</div>
+              <div className="text-lg truncate">{postState.title}</div>
             </div>
           )}
         </div>
+
         <div className=""></div>
       </div>
-      {showPinnedNav && (
+
+      {/* 固定導航 - 使用條件渲染配合 CSS 過渡 */}
+      <div>
         <Nav
-          variant={showBackground ? 'integrated' : 'default'}
           className={pinnedNavClass}
+          variant={showBackground ? 'integrated' : 'default'}
         />
-      )}
+      </div>
     </header>
   )
 }
