@@ -19,12 +19,14 @@ interface AnimatedHeaderProps {
   iconLayout?: boolean
   className?: string
   variant?: 'default' | 'integrated'
+  id: string // 必須傳入的唯一 id，用於生成唯一的 layoutId
 }
 
 const Nav = ({
   iconLayout = true,
   className,
   variant = 'default',
+  id,
 }: AnimatedHeaderProps) => {
   const pathname = usePathname()
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
@@ -236,7 +238,7 @@ const Nav = ({
                   {/* 圖標 */}
                   {isActive && shouldAnimate && item.icon && (
                     <m.div
-                      layoutId="header-menu-icon"
+                      layoutId={`header-menu-icon-${id}`}
                       className="flex items-center justify-center w-5 relative"
                       transition={{
                         type: 'spring',
@@ -295,7 +297,7 @@ const Nav = ({
                 {/* 活躍項目的底部橫線 */}
                 {isActive && shouldAnimate && (
                   <m.span
-                    layoutId="active-nav-underline"
+                    layoutId={`active-nav-underline-${id}`}
                     className="absolute inset-x-0 bottom-px h-px bg-gradient-to-r from-transparent via-teal-400 to-transparent pointer-events-none rounded-full"
                     transition={{
                       type: 'spring',

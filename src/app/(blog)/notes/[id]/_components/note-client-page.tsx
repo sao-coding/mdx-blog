@@ -1,12 +1,13 @@
 'use client'
 
-import { useRef, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { format } from 'date-fns'
 import { ClockIcon } from 'lucide-react'
 import { NoteMainContainer } from './note-main-container'
 import TableOfContent from '@/components/toc'
 import { NoteItem } from '@/types/note'
 import { TocItem } from '@/types/toc'
+import { useHeaderStore } from '@/store/header-store'
 
 interface NoteClientPageProps {
   note: NoteItem
@@ -16,6 +17,15 @@ interface NoteClientPageProps {
 
 export function NoteClientPage({ note, toc, children }: NoteClientPageProps) {
   const targetRef = useRef<HTMLDivElement>(null)
+  const { setNoteState } = useHeaderStore()
+
+  useEffect(() => {
+    setNoteState({
+      topic: note.topic?.name || '',
+      title: note.title,
+      url: window.location.href,
+    })
+  }, [note, setNoteState])
 
   return (
     <>

@@ -27,6 +27,7 @@ interface HeaderState {
   setNoteState: (noteState: HeaderState['noteState']) => void
   clearPostState: () => void
   clearNoteState: () => void
+  clearAll: () => void
 }
 
 export const useHeaderStore = create<HeaderState>((set) => ({
@@ -54,6 +55,20 @@ export const useHeaderStore = create<HeaderState>((set) => ({
     }),
   clearNoteState: () =>
     set({
+      noteState: {
+        topic: null,
+        title: null,
+        url: null,
+      },
+    }),
+  clearAll: () =>
+    set({
+      postState: {
+        category: null,
+        tags: [],
+        title: null,
+        url: null,
+      },
       noteState: {
         topic: null,
         title: null,

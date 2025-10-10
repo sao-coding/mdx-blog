@@ -10,7 +10,7 @@ import { useHeaderStore } from '@/store/header-store'
 
 const Header = () => {
   const pathname = usePathname()
-  const { postState, noteState } = useHeaderStore()
+  const { postState, noteState, clearAll } = useHeaderStore()
 
   // 合併為單一狀態對象,確保狀態同步更新
   const [scrollState, setScrollState] = useState({
@@ -22,6 +22,13 @@ const Header = () => {
   const lastScrollYRef = useRef(0)
   const scrollDirectionRef = useRef<'up' | 'down' | null>(null)
   const tickingRef = useRef(false)
+
+  useEffect(() => {
+    // 若是切換到其他非posts/[slug]或notes/[id]頁面，清除標題狀態
+    if (!pathname?.startsWith('/posts/') && !pathname?.startsWith('/notes/')) {
+      clearAll()
+    }
+  }, [pathname, clearAll])
 
   // 常量配置
   const SCROLL_THRESHOLD = 50 // 判斷是否滾動的閾值
@@ -126,6 +133,7 @@ const Header = () => {
 
         <div className="relative flex grow justify-center items-center">
           <Nav
+            id="central"
             variant={showBackground ? 'integrated' : 'default'}
             className={centralNavClass}
           />
@@ -145,12 +153,12 @@ const Header = () => {
       </div>
 
       {/* 固定導航 - 使用條件渲染配合 CSS 過渡 */}
-      <div>
-        <Nav
-          className={pinnedNavClass}
-          variant={showBackground ? 'integrated' : 'default'}
-        />
-      </div>
+
+      <Nav
+        id="pinned"
+        className={pinnedNavClass}
+        variant={showBackground ? 'integrated' : 'default'}
+      />
     </header>
   )
 }
