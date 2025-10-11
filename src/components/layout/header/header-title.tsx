@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useHeaderStore } from '@/store/header-store'
+import { AnimatePresence, motion } from 'motion/react'
 
 type Props = {
   showBackground: boolean
@@ -33,27 +34,35 @@ const HeaderTitle: React.FC<Props> = ({ showBackground }) => {
 
   const title = postState?.title ?? noteState?.title
 
-  if (!title || !showBackground) return null
-
   return (
-    <div className={cn('absolute w-full lg:px-16')}>
-      <small className="flex gap-0.5 text-gray-500">
-        {postState.title && (
-          <>
-            {postState.category}
-            <span>/</span>
-            {postState.tags.join(', ')}
-          </>
-        )}
-        {noteState.title && (
-          <>
-            日記<span>/</span>
-            {noteState.topic}
-          </>
-        )}
-      </small>
-      <div className="text-xl leading-normal truncate">{title}</div>
-    </div>
+    <AnimatePresence>
+      {title && showBackground && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.2 }}
+          className={cn('absolute w-full lg:px-16')}
+        >
+          <small className="flex gap-0.5 text-gray-500">
+            {postState.title && (
+              <>
+                {postState.category}
+                <span>/</span>
+                {postState.tags.join(', ')}
+              </>
+            )}
+            {noteState.title && (
+              <>
+                日記<span>/</span>
+                {noteState.topic}
+              </>
+            )}
+          </small>
+          <div className="text-xl leading-normal truncate">{title}</div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 
