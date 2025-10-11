@@ -1,5 +1,5 @@
 const NoteTopicsPage = () => {
-  return <div>NoteTopicsPage</div>
+  return <div className="h-screen">NoteTopicsPage</div>
 }
 
 export default NoteTopicsPage

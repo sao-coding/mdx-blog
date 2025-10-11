@@ -47,8 +47,11 @@ const Header = () => {
         }
 
         // 判斷是否為文章/筆記詳情頁
+        // 特別排除 /notes/topics（topics 列表）不要被視為 note detail
         const isDetailPage =
-          pathname?.startsWith('/posts/') || pathname?.startsWith('/notes/')
+          pathname?.startsWith('/posts/') ||
+          (pathname?.startsWith('/notes/') &&
+            !pathname?.startsWith('/notes/topics'))
 
         // 計算是否顯示固定導航
         const newShowPinnedNav =
@@ -83,12 +86,14 @@ const Header = () => {
   const isTargetPage =
     pathname === '/' ||
     pathname?.startsWith('/posts') ||
-    pathname?.startsWith('/notes')
+    // 將 /notes/topics 視為列表而非目標頁（不顯示背景）
+    (pathname?.startsWith('/notes') && !pathname?.startsWith('/notes/topics'))
 
   const showBackground = isTargetPage && scrollState.isScrolled
 
   const isDetailPage =
-    pathname?.startsWith('/posts/') || pathname?.startsWith('/notes/')
+    pathname?.startsWith('/posts/') ||
+    (pathname?.startsWith('/notes/') && !pathname?.startsWith('/notes/topics'))
 
   // 中央導航的樣式
   const centralNavClass = cn(

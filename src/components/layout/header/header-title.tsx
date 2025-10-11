@@ -19,8 +19,14 @@ const HeaderTitle: React.FC<Props> = ({ showBackground }) => {
   const { postState, noteState, clearAll } = useHeaderStore()
 
   // 當路由變動且不在 detail page 時，清除 store 狀態
+  // 特別處理 /notes/topics：它是 topics 列表，不應被視為 note detail，故需清除
   useEffect(() => {
-    if (!pathname?.startsWith('/posts/') && !pathname?.startsWith('/notes/')) {
+    const isPostDetail = pathname?.startsWith('/posts/')
+    // notes 下有多種頁面，/notes/topics 應視為 list，而非 detail
+    const isNoteDetail =
+      pathname?.startsWith('/notes/') && !pathname?.startsWith('/notes/topics')
+
+    if (!isPostDetail && !isNoteDetail) {
       clearAll()
     }
   }, [pathname, clearAll])
