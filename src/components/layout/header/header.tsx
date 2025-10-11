@@ -6,11 +6,10 @@ import { cn } from '@/lib/utils'
 import DevicesStatus from './devices-status'
 import Nav from './nav'
 import SiteOwnerAvatar from './site-owner-avatar'
-import { useHeaderStore } from '@/store/header-store'
+import HeaderTitle from './header-title'
 
 const Header = () => {
   const pathname = usePathname()
-  const { postState, noteState, clearAll } = useHeaderStore()
 
   // 合併為單一狀態對象,確保狀態同步更新
   const [scrollState, setScrollState] = useState({
@@ -22,13 +21,6 @@ const Header = () => {
   const lastScrollYRef = useRef(0)
   const scrollDirectionRef = useRef<'up' | 'down' | null>(null)
   const tickingRef = useRef(false)
-
-  useEffect(() => {
-    // 若是切換到其他非posts/[slug]或notes/[id]頁面，清除標題狀態
-    if (!pathname?.startsWith('/posts/') && !pathname?.startsWith('/notes/')) {
-      clearAll()
-    }
-  }, [pathname, clearAll])
 
   // 常量配置
   const SCROLL_THRESHOLD = 50 // 判斷是否滾動的閾值
@@ -109,7 +101,7 @@ const Header = () => {
   // 固定導航的樣式
   const pinnedNavClass = cn(
     'fixed top-[3.375rem] left-1/2 -translate-x-1/2 z-50',
-    'bg-background/80 backdrop-blur-md',
+    'bg-background',
     'transition-all duration-300 ease-in-out',
     scrollState.showPinnedNav
       ? 'opacity-100 translate-y-0'
@@ -121,7 +113,7 @@ const Header = () => {
       className={cn(
         'fixed inset-x-0 top-0 z-50 h-[4.5rem] border-b transition-colors duration-300',
         showBackground
-          ? 'border-gray-700/50 bg-background/80 backdrop-blur-md'
+          ? 'border-gray-700/50 bg-background/40 backdrop-blur-md'
           : 'border-transparent'
       )}
     >
@@ -137,16 +129,7 @@ const Header = () => {
             variant={showBackground ? 'integrated' : 'default'}
             className={centralNavClass}
           />
-          {postState && showBackground && (
-            <div className="absolute w-full lg:px-16">
-              <div className="text-lg truncate">{postState.title}</div>
-            </div>
-          )}
-          {noteState && showBackground && (
-            <div className="absolute w-full lg:px-16">
-              <div className="text-lg truncate">{noteState.title}</div>
-            </div>
-          )}
+          <HeaderTitle showBackground={showBackground} />
         </div>
 
         <div className=""></div>
