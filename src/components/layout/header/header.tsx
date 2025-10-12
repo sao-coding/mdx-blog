@@ -7,6 +7,22 @@ import DevicesStatus from './devices-status'
 import Nav from './nav'
 import SiteOwnerAvatar from './site-owner-avatar'
 import HeaderTitle from './header-title'
+import { useIsMobile } from '@/hooks/use-mobile'
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
+import { Button } from '@/components/ui/button'
+import { VisuallyHidden } from 'radix-ui'
+import { NAV_LINKS } from '@/config/menu'
+import Link from 'next/link'
+import { MenuIcon } from 'lucide-react'
 
 const Header = () => {
   const pathname = usePathname()
@@ -21,6 +37,7 @@ const Header = () => {
   const lastScrollYRef = useRef(0)
   const scrollDirectionRef = useRef<'up' | 'down' | null>(null)
   const tickingRef = useRef(false)
+  const isMobile = useIsMobile(1024) // 以 1024px 作為行動裝置斷點
 
   // 常量配置
   const SCROLL_THRESHOLD = 50 // 判斷是否滾動的閾值
@@ -114,40 +131,97 @@ const Header = () => {
   )
 
   return (
-    <header
-      className={cn(
-        'fixed inset-x-0 top-0 z-50 h-[4.5rem] border-b transition-colors duration-300',
-        showBackground
-          ? 'border-gray-700/50 bg-background/40 backdrop-blur-md'
-          : 'border-transparent'
-      )}
-    >
-      <div className="grid grid-cols-[4.5rem_auto_4.5rem] max-w-7xl mx-auto h-full">
-        <div className="flex items-center space-x-4">
-          <SiteOwnerAvatar />
-          <DevicesStatus />
+    <Drawer>
+      <header
+        className={cn(
+          'fixed inset-x-0 top-0 z-50 h-[4.5rem] border-b transition-colors duration-300',
+          showBackground
+            ? 'border-gray-700/50 bg-background/40 backdrop-blur-md'
+            : 'border-transparent'
+        )}
+      >
+        <div className="grid grid-cols-[4.5rem_auto_4.5rem] max-w-7xl mx-auto h-full">
+          {isMobile && (
+            <div className="relative flex size-full items-center justify-center lg:hidden">
+              <DrawerTrigger>
+                <MenuIcon />
+              </DrawerTrigger>
+              <DrawerContent>
+                <VisuallyHidden.Root>
+                  <DrawerHeader>
+                    <DrawerTitle>Site Navigation</DrawerTitle>
+                    <DrawerDescription>
+                      Navigate through the site
+                    </DrawerDescription>
+                  </DrawerHeader>
+                </VisuallyHidden.Root>
+                {/* 主導航選單 */}
+                <div className="flex flex-col p-4">
+                  {NAV_LINKS.map((link, index) => (
+                    <div key={index} className="py-2">
+                      {link.href ? (
+                        <div className="flex items-center">
+                          {link.icon && <link.icon className="size-5 mr-2" />}
+                          <DrawerClose asChild>
+                            <Link
+                              href={link.href}
+                              className="text-lg font-medium leading-none"
+                            >
+                              <h2>{link.text}</h2>
+                            </Link>
+                          </DrawerClose>
+                        </div>
+                      ) : (
+                        <p className="text-lg font-medium leading-none">
+                          {link.text}
+                        </p>
+                      )}
+                      {link.children && (
+                        <div className="pl-4 p-2 flex flex-col space-y-2">
+                          {link.children
+                            .filter((child) => child.show)
+                            .map((child, childIndex) => (
+                              <DrawerClose asChild key={childIndex}>
+                                <Link href={child.href}>{child.text}</Link>
+                              </DrawerClose>
+                            ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </DrawerContent>
+            </div>
+          )}
+          <div>
+            <div className="flex justify-center items-center space-x-4 h-full">
+              <SiteOwnerAvatar />
+              <DevicesStatus />
+            </div>
+          </div>
+          {!isMobile && (
+            <div className="relative flex grow justify-center items-center">
+              <Nav
+                id="central"
+                variant={showBackground ? 'integrated' : 'default'}
+                className={centralNavClass}
+              />
+              <HeaderTitle showBackground={showBackground} />
+            </div>
+          )}
+
+          <div className=""></div>
         </div>
 
-        <div className="relative flex grow justify-center items-center">
-          <Nav
-            id="central"
-            variant={showBackground ? 'integrated' : 'default'}
-            className={centralNavClass}
-          />
-          <HeaderTitle showBackground={showBackground} />
-        </div>
+        {/* 固定導航 - 使用條件渲染配合 CSS 過渡 */}
 
-        <div className=""></div>
-      </div>
-
-      {/* 固定導航 - 使用條件渲染配合 CSS 過渡 */}
-
-      <Nav
-        id="pinned"
-        className={pinnedNavClass}
-        variant={showBackground ? 'integrated' : 'default'}
-      />
-    </header>
+        <Nav
+          id="pinned"
+          className={pinnedNavClass}
+          variant={showBackground ? 'integrated' : 'default'}
+        />
+      </header>
+    </Drawer>
   )
 }
 
