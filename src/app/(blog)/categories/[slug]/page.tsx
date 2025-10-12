@@ -50,7 +50,7 @@ const CategoriesPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 >
                   <Link
                     href={`/posts/${post.slug}`}
-                    className="text-foreground group-hover:text-primary transition-colors duration-200 hover:underline"
+                    className="sao-link text-foreground group-hover:text-primary transition-colors duration-200 !no-underline"
                   >
                     {post.title}
                   </Link>
