@@ -41,12 +41,12 @@ export const NAV_LINKS: NavLinks = [
         text: '程式設計',
         show: true,
       },
-      {
-        icon: IconPencil,
-        href: '/categories/archives',
-        text: '歸檔',
-        show: true,
-      },
+      // {
+      //   icon: IconPencil,
+      //   href: '/categories/archives',
+      //   text: '歸檔',
+      //   show: true,
+      // },
     ],
   },
   {
