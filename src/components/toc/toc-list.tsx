@@ -50,6 +50,15 @@ export const TocList: React.FC<{
             )}
             <a
               href={item.href}
+              onClick={(e) => {
+                e.preventDefault()
+                const targetId = item.href?.slice(1)
+                if (!targetId) return
+                const targetElement = document.getElementById(targetId)
+                if (targetElement) {
+                  targetElement.scrollIntoView({ behavior: 'smooth' })
+                }
+              }}
               className={cn(
                 'flex items-start gap-2 group leading-normal truncate transition-all duration-200',
                 getTextClass(depth, isActive),

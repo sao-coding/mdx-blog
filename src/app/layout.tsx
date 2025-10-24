@@ -27,17 +27,17 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="zh-Hant-TW" className="scroll-smooth dark">
+    <html lang="zh-Hant-TW" className="dark">
       <body>
         <Providers>
           {children}
           <Toaster richColors />
         </Providers>
-        <canvas
+        {/* <canvas
           id="universe"
           className="pointer-events-none fixed left-0 top-0 z-[1] m-0 block h-full w-full border-0 p-0 outline-0"
         />
-        <Script src="/js/universe.js" async defer strategy="afterInteractive" />
+        <Script src="/js/universe.js" async defer strategy="afterInteractive" /> */}
       </body>
     </html>
   )
