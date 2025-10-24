@@ -32,6 +32,7 @@ const Header = () => {
     isScrolled: false,
     showPinnedNav: false,
   })
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   // 滾動相關的 refs
   const lastScrollYRef = useRef(0)
@@ -44,9 +45,11 @@ const Header = () => {
   const DIRECTION_THRESHOLD = 10 // 判斷滾動方向的閾值(減小以提高響應速度)
 
   useEffect(() => {
-    lastScrollYRef.current = window.scrollY
+    // lastScrollYRef.current = window.scrollY
 
     const handleScroll = () => {
+      // 當 Drawer 開啟時忽略由 overlay/portal 導致的滾動或 layout 變化
+      if (drawerOpen) return
       if (tickingRef.current) return
       tickingRef.current = true
 
@@ -97,7 +100,7 @@ const Header = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [pathname])
+  }, [pathname, drawerOpen])
 
   // 派生狀態計算
   const isTargetPage =
@@ -130,8 +133,17 @@ const Header = () => {
       : 'opacity-0 -translate-y-4 pointer-events-none'
   )
 
+  useEffect(() => {
+    console.log('Header State:', {
+      isScrolled: scrollState.isScrolled,
+      showPinnedNav: scrollState.showPinnedNav,
+      scrollDirection: scrollDirectionRef.current,
+      pathname,
+    })
+  }, [scrollState, pathname])
+
   return (
-    <Drawer>
+    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
       <header
         className={cn(
           'fixed inset-x-0 top-0 z-50 h-[4.5rem] border-b transition-colors duration-300',
@@ -194,9 +206,18 @@ const Header = () => {
             </div>
           )}
           <div>
-            <div className="flex justify-center items-center space-x-4 h-full">
-              <SiteOwnerAvatar />
-              <DevicesStatus />
+            <div className="relative flex justify-center items-center space-x-4 h-full">
+              {/* <SiteOwnerAvatar />
+              <DevicesStatus /> */}
+              {/* 如果是手機模式 並且 showBackground 就顯示標題 不然就顯示 SiteOwnerAvatar DevicesStatus */}
+              {showBackground && isMobile ? (
+                <HeaderTitle showBackground={showBackground} />
+              ) : (
+                <>
+                  <SiteOwnerAvatar />
+                  <DevicesStatus />
+                </>
+              )}
             </div>
           </div>
           {!isMobile && (
