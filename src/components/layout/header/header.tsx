@@ -235,12 +235,13 @@ const Header = () => {
         </div>
 
         {/* 固定導航 - 使用條件渲染配合 CSS 過渡 */}
-
-        <Nav
-          id="pinned"
-          className={pinnedNavClass}
-          variant={showBackground ? 'integrated' : 'default'}
-        />
+        {!isMobile && (
+          <Nav
+            id="pinned"
+            className={pinnedNavClass}
+            variant={showBackground ? 'integrated' : 'default'}
+          />
+        )}
       </header>
     </Drawer>
   )
