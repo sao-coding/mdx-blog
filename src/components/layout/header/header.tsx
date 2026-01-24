@@ -207,8 +207,6 @@ const Header = () => {
           )}
           <div>
             <div className="relative flex justify-center items-center space-x-4 h-full">
-              {/* <SiteOwnerAvatar />
-              <DevicesStatus /> */}
               {/* 如果是手機模式 並且 showBackground 就顯示標題 不然就顯示 SiteOwnerAvatar DevicesStatus */}
               {showBackground && isMobile ? (
                 <HeaderTitle showBackground={showBackground} />
