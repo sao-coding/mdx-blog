@@ -432,11 +432,7 @@ export default function DevicesStatus() {
             transition: { type: 'tween', duration: 0.1, ease: 'easeInOut' },
           }}
           transition={SUPER_BOUNCY_SPRING}
-          style={{
-            position: 'absolute',
-            overflow: 'hidden',
-            pointerEvents: 'auto',
-          }}
+          className='pointer-events-auto absolute inset-y-0 left-0 z-10 flex items-center overflow-hidden'
         >
           <Tooltip>
             <TooltipTrigger asChild>
@@ -476,11 +472,7 @@ export default function DevicesStatus() {
             transition: { type: 'tween', duration: 0.1, ease: 'easeInOut' },
           }}
           transition={SUPER_BOUNCY_SPRING}
-          style={{
-            position: 'absolute',
-            overflow: 'hidden',
-            pointerEvents: 'auto',
-          }}
+          className='pointer-events-auto absolute inset-y-0 left-0 z-10 flex items-center overflow-hidden'
         >
           <Tooltip>
             <TooltipTrigger asChild>
@@ -516,7 +508,7 @@ export default function DevicesStatus() {
   return (
     <TooltipProvider>
       <div
-        className="relative flex items-center cursor-pointer select-none"
+        className="relative flex size-full items-center justify-center cursor-pointer select-none"
         onClick={toggleDisplayMode}
       >
         <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
