@@ -508,7 +508,7 @@ export default function DevicesStatus() {
   return (
     <TooltipProvider>
       <div
-        className="relative flex size-full items-center justify-center cursor-pointer select-none"
+        className="relative flex size-10 items-center justify-center cursor-pointer select-none"
         onClick={toggleDisplayMode}
       >
         <AnimatePresence mode="wait">{renderContent()}</AnimatePresence>
