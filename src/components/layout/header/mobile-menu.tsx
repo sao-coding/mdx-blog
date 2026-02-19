@@ -19,7 +19,7 @@ const MobileMenu = () => {
             <DrawerTrigger>
                 <MenuIcon />
             </DrawerTrigger>
-            <DrawerContent>
+            <DrawerContent className='data-[vaul-drawer-direction=bottom]:rounded-t-3xl'>
                 <VisuallyHidden.Root>
                     <DrawerHeader>
                         <DrawerTitle>手機選單</DrawerTitle>
