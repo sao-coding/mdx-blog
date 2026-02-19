@@ -5,6 +5,7 @@ import TableOfContent from '@/components/toc'
 import { ScrollProgressIndicator } from '@/components/scroll-progress-indicator'
 import type { TocItem } from 'remark-flexible-toc'
 import { useHeaderStore } from '@/store/header-store'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 type PostClientPageProps = {
   children: ReactNode
@@ -26,6 +27,8 @@ export function PostClientPage({
 }: PostClientPageProps) {
   const targetRef = useRef<HTMLDivElement | null>(null)
   const { setPostState } = useHeaderStore()
+  // 1024
+  const isMobile = useIsMobile(1024)
 
   useEffect(() => {
     // 設定 header 狀態
@@ -45,8 +48,11 @@ export function PostClientPage({
             {children}
           </article>
         </div>
-        <div className="relative hidden lg:block">
+        {/* <div className="relative hidden lg:block">
           {showToc && <TableOfContent toc={toc} targetRef={targetRef} />}
+        </div> */}
+        <div className="relative hidden lg:block">
+          {!isMobile && showToc && <TableOfContent toc={toc} targetRef={targetRef} />}
         </div>
       </div>
     </div>

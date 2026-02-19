@@ -23,6 +23,7 @@ import { VisuallyHidden } from 'radix-ui'
 import { NAV_LINKS } from '@/config/menu'
 import Link from 'next/link'
 import { MenuIcon } from 'lucide-react'
+import MobileMenu from './mobile-menu'
 
 const Header = () => {
   const pathname = usePathname()
@@ -152,58 +153,9 @@ const Header = () => {
             : 'border-transparent'
         )}
       >
-        <div className="grid grid-cols-[4.5rem_auto_4.5rem] max-w-7xl mx-auto h-full">
+        <div className="grid grid-cols-[4.5rem_auto_4.5rem] max-w-7xl mx-auto h-full lg:px-8">
           {isMobile && (
-            <div className="relative flex size-full items-center justify-center lg:hidden">
-              <DrawerTrigger>
-                <MenuIcon />
-              </DrawerTrigger>
-              <DrawerContent>
-                <VisuallyHidden.Root>
-                  <DrawerHeader>
-                    <DrawerTitle>Site Navigation</DrawerTitle>
-                    <DrawerDescription>
-                      Navigate through the site
-                    </DrawerDescription>
-                  </DrawerHeader>
-                </VisuallyHidden.Root>
-                {/* 主導航選單 */}
-                <div className="flex flex-col p-4">
-                  {NAV_LINKS.map((link, index) => (
-                    <div key={index} className="py-2">
-                      {link.href ? (
-                        <div className="flex items-center">
-                          {link.icon && <link.icon className="size-5 mr-2" />}
-                          <DrawerClose asChild>
-                            <Link
-                              href={link.href}
-                              className="text-lg font-medium leading-none"
-                            >
-                              <h2>{link.text}</h2>
-                            </Link>
-                          </DrawerClose>
-                        </div>
-                      ) : (
-                        <p className="text-lg font-medium leading-none">
-                          {link.text}
-                        </p>
-                      )}
-                      {link.children && (
-                        <div className="pl-4 p-2 flex flex-col space-y-2">
-                          {link.children
-                            .filter((child) => child.show)
-                            .map((child, childIndex) => (
-                              <DrawerClose asChild key={childIndex}>
-                                <Link href={child.href}>{child.text}</Link>
-                              </DrawerClose>
-                            ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </DrawerContent>
-            </div>
+            <MobileMenu />
           )}
           <div>
             <div className="relative flex justify-center items-center space-x-4 h-full">
