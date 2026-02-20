@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { TocItem } from '@/types/toc'
 import TocList from './toc-list'
 import useScrollspy from '@/hooks/use-scrollspy'
-import { LayoutGroup } from 'motion/react'
+import { domAnimation, LazyMotion, LayoutGroup } from 'motion/react'
 import { ScrollProgressIndicator } from '../scroll-progress-indicator'
 
 const getMinDepth = (items: TocItem[]): number => {
@@ -93,11 +93,13 @@ const TableOfContent = ({
     <aside className="sticky top-[120px] h-[calc(100vh-6rem-4.5rem-150px-120px)]">
       <div className="relative h-full" aria-label="Table of contents">
         <div className="max-h-[60vh] overflow-auto absolute flex flex-col">
-          <LayoutGroup>
-            <ul ref={containerRef} className="px-2 space-y-2 relative">
-              <TocList items={toc} activeId={activeId} rootDepth={rootDepth} />
-            </ul>
-          </LayoutGroup>
+          <LazyMotion features={domAnimation}>
+            <LayoutGroup>
+              <ul ref={containerRef} className="px-2 space-y-2 relative">
+                <TocList key={toc.length} items={toc} activeId={activeId} rootDepth={rootDepth} />
+              </ul>
+            </LayoutGroup>
+          </LazyMotion>
           <ScrollProgressIndicator target={targetRef} />
         </div>
       </div>
