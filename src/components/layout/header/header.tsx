@@ -27,7 +27,7 @@ const Header = () => {
   const lastScrollYRef = useRef(0)
   const scrollDirectionRef = useRef<'up' | 'down' | null>(null)
   const tickingRef = useRef(false)
-  const isMobile = useIsMobile(1024) // 以 1024px 作為行動裝置斷點
+  const isMobile = useIsMobile(1024) // 以 1024px 作為行動裝置斷點; 可能為 undefined（尚未初始化）
 
   // 常量配置
   const SCROLL_THRESHOLD = 50 // 判斷是否滾動的閾值
@@ -142,13 +142,11 @@ const Header = () => {
         )}
       >
         <div className="grid grid-cols-[4.5rem_auto_4.5rem] max-w-7xl mx-auto h-full lg:px-8">
-          {isMobile && (
-            <MobileMenu />
-          )}
+          <MobileMenu />
           <div>
             <div className="relative flex justify-center items-center space-x-4 h-full">
               {/* 如果是手機模式 並且 showBackground 就顯示標題 不然就顯示 SiteOwnerAvatar DevicesStatus */}
-              {showBackground && isMobile ? (
+              {showBackground && isMobile === true ? (
                 <HeaderTitle showBackground={showBackground} />
               ) : (
                 <>
@@ -158,7 +156,7 @@ const Header = () => {
               )}
             </div>
           </div>
-          {!isMobile && (
+          {isMobile === false && (
             <div className="relative flex grow justify-center items-center">
               <Nav
                 id="central"
@@ -173,7 +171,7 @@ const Header = () => {
         </div>
 
         {/* 固定導航 - 使用條件渲染配合 CSS 過渡 */}
-        {!isMobile && (
+        {isMobile === false && (
           <Nav
             id="pinned"
             className={pinnedNavClass}
