@@ -38,6 +38,7 @@ export default async function NotesRedirectPage() {
 
   if (latestNoteId) {
     // 執行伺服器端重定向
+    console.log('Redirecting to latest note with ID:', latestNoteId)
     redirect(`/notes/${latestNoteId}`)
   } else {
     // 如果無法獲取 ID，則顯示一個錯誤或備用頁面

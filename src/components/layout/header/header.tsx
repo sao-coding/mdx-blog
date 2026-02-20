@@ -10,19 +10,7 @@ import HeaderTitle from './header-title'
 import { useIsMobile } from '@/hooks/use-mobile'
 import {
   Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
 } from '@/components/ui/drawer'
-import { Button } from '@/components/ui/button'
-import { VisuallyHidden } from 'radix-ui'
-import { NAV_LINKS } from '@/config/menu'
-import Link from 'next/link'
-import { MenuIcon } from 'lucide-react'
 import MobileMenu from './mobile-menu'
 
 const Header = () => {
@@ -129,7 +117,7 @@ const Header = () => {
     'fixed top-[3.375rem] left-1/2 -translate-x-1/2 z-50',
     'bg-background',
     'transition-all duration-300 ease-in-out',
-    scrollState.showPinnedNav
+    scrollState.showPinnedNav && isDetailPage
       ? 'opacity-100 translate-y-0'
       : 'opacity-0 -translate-y-4 pointer-events-none'
   )
