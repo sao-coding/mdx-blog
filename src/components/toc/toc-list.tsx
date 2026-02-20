@@ -81,7 +81,7 @@ export const TocList: React.FC<{
                 document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' })
               }}
               className={cn(
-                'flex items-start gap-2 group leading-normal truncate',
+                'flex items-start gap-2 group leading-normal',
                 getTextClass(depth, isActive),
               )}
               variants={tocItemVariants}

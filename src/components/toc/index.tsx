@@ -86,13 +86,13 @@ const TableOfContent = ({
       window.removeEventListener('resize', setMaxWidth)
     }
   }, [])
-  if (!toc || toc.length === 0) return null
+  if (!toc) return null
 
   return (
     // 這裡加入 sticky 與 top 偏移，讓目錄在滾動時固定顯示
     <aside className="sticky top-[120px] h-[calc(100vh-6rem-4.5rem-150px-120px)]">
       <div className="relative h-full" aria-label="Table of contents">
-        <div className="max-h-[60vh] overflow-auto absolute flex flex-col">
+        <div className="max-h-[60vh] overflow-visible absolute flex flex-col">
           <LazyMotion features={domAnimation}>
             <LayoutGroup>
               <ul ref={containerRef} className="px-2 space-y-2 relative">

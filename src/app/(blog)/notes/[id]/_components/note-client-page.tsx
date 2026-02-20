@@ -60,7 +60,7 @@ export function NoteClientPage({ note, toc, children }: NoteClientPageProps) {
           </article>
         </NoteMainContainer>
       </div>
-      <div className="relative hidden min-w-0 xl:block">
+      <div className="relative hidden min-w-0 xl:block mt-[120px]">
         <TableOfContent toc={toc} targetRef={targetRef} />
       </div>
     </>
