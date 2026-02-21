@@ -6,6 +6,7 @@ import { ScrollProgressIndicator } from '@/components/scroll-progress-indicator'
 import type { TocItem } from 'remark-flexible-toc'
 import { useHeaderStore } from '@/store/header-store'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { BackToTopFAB } from '@/components/fab'
 
 type PostClientPageProps = {
   children: ReactNode
@@ -55,6 +56,8 @@ export function PostClientPage({
           {!isMobile && showToc && <TableOfContent toc={toc} targetRef={targetRef} />}
         </div>
       </div>
+
+      <BackToTopFAB />
     </div>
   )
 }
