@@ -91,7 +91,7 @@ const Header = () => {
             </div>
           </div>
           {isMobile === false && (
-            <div className="relative flex grow justify-center items-center">
+            <div className="relative grow justify-center items-center hidden lg:flex">
               <Nav
                 id="central"
                 variant={showBackground ? 'integrated' : 'default'}
