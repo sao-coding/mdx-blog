@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { ApiResponse } from '@/types/api'
 import { NoteItem } from '@/types/note'
 
+export const dynamic = 'force-dynamic'
+
 // 此函式將在伺服器端執行
 const getLatestNoteId = async (): Promise<string | null> => {
   try {
