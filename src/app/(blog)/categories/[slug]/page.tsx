@@ -46,17 +46,17 @@ const CategoriesPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               {data?.data.map((post) => (
                 <li
                   key={post.id}
-                  className="timeline-item flex min-w-0 items-center justify-between leading-loose"
+                  className="timeline-item flex min-w-0 items-center justify-between leading-loose space-x-2"
                 >
                   <Link
                     href={`/posts/${post.slug}`}
-                    className="sao-link text-foreground group-hover:text-primary transition-colors duration-200 !no-underline"
+                    className="sao-link text-foreground group-hover:text-primary transition-colors duration-200 no-underline! truncate"
                   >
                     {post.title}
                   </Link>
 
                   {/* Date */}
-                  <span className="text-sm text-muted-foreground font-mono">
+                  <span className="text-muted-foreground font-mono shrink-0">
                     {post.updatedAt.slice(0, 10)}
                   </span>
                 </li>
