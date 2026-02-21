@@ -18,5 +18,5 @@ export function useIsMobile(breakpoint: number = MOBILE_BREAKPOINT) {
   }, [breakpoint])
 
   // 回傳可能為 undefined，呼叫端應該對 undefined 做出合理處理
-  return isMobile
+  return !!isMobile
 }
