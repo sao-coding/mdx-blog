@@ -7,6 +7,7 @@ import type { TocItem } from 'remark-flexible-toc'
 import { useHeaderStore } from '@/store/header-store'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { BackToTopFAB } from '@/components/fab'
+import { CommentSection } from '@/components/comment'
 
 type PostClientPageProps = {
   children: ReactNode
@@ -48,6 +49,7 @@ export function PostClientPage({
           <article className="prose dark:prose-invert max-w-full">
             {children}
           </article>
+          <CommentSection postId="article-slug" lazyLoad />
         </div>
         {/* <div className="relative hidden lg:block">
           {showToc && <TableOfContent toc={toc} targetRef={targetRef} />}
@@ -56,7 +58,6 @@ export function PostClientPage({
           {!isMobile && showToc && <TableOfContent toc={toc} targetRef={targetRef} />}
         </div>
       </div>
-
       <BackToTopFAB />
     </div>
   )
