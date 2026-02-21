@@ -33,17 +33,10 @@ const PostsPage = () => {
       },
     }
   )
-
+  
   return (
     <div className="mt-20">
-      <div className="mx-auto mt-14 max-w-5xl px-6 lg:mt-[80px] lg:px-0 2xl:max-w-6xl">
-        <header className="prose mb-8 max-w-none">
-          <h1 className="text-3xl font-extrabold text-foreground">最新文章</h1>
-          <p className="mt-2 text-muted-foreground">
-            瀏覽我們的技術與心得分享。按文章卡片查看詳情。
-          </p>
-        </header>
-
+      <div className="mx-auto mt-14 max-w-3xl px-2 lg:mt-[80px] lg:px-0 2xl:max-w-4xl">
         {isLoading && (
           <div className="flex flex-col gap-6">
             <SkeletonCard />
