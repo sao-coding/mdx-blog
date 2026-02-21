@@ -90,7 +90,7 @@ const TableOfContent = ({
 
   return (
     // 這裡加入 sticky 與 top 偏移，讓目錄在滾動時固定顯示
-    <aside className="sticky top-[120px] h-[calc(100vh-6rem-4.5rem-150px-120px)]">
+    <aside className="sticky top-[120px] h-[calc(100vh-6rem-4.5rem-150px-120px)] ml-4">
       <div className="relative h-full" aria-label="Table of contents">
         <div className="max-h-[60vh] overflow-visible absolute flex flex-col">
           <LazyMotion features={domAnimation}>
