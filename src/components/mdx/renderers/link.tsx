@@ -21,8 +21,8 @@ type EnhancedLinkProps = React.ComponentProps<'a'> & {
 
 const EnhancedLink = ({ href, data, ...props }: EnhancedLinkProps) => {
   return (
-    <Glimpse closeDelay={100} openDelay={0}>
-      <GlimpseTrigger asChild>
+    <Glimpse>
+      <GlimpseTrigger delay={0} closeDelay={100} render={
         <span className="inline-flex items-center align-top [&_svg]:size-4">
           {href.includes('https://github.com') && (
             <span className="inline-flex items-center mx-1">
@@ -31,6 +31,7 @@ const EnhancedLink = ({ href, data, ...props }: EnhancedLinkProps) => {
           )}
           <Link className="sao-link" href={href} {...props} />
         </span>
+      }>
       </GlimpseTrigger>
       <GlimpseContent className={cn(!data.image && 'w-full p-2')}>
         {!data.image && (

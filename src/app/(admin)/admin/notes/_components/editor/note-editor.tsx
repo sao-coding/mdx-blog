@@ -3,16 +3,15 @@
 import { DevTool } from '@hookform/devtools'
 import { noteSchema } from '@/schemas/note'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import type z from 'zod'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+  Field,
+  FieldContent,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -106,6 +105,7 @@ const NoteEditor = ({ noteData }: { noteData?: NoteItem }) => {
       updatedAt: new Date().toISOString(),
     },
   })
+  const errors = form.formState.errors
 
   useEffect(() => {
     if (!noteData) return
@@ -239,38 +239,32 @@ const NoteEditor = ({ noteData }: { noteData?: NoteItem }) => {
       </header>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
-        <Form {...form}>
-          <form
-            id="note-form"
-            onSubmit={form.handleSubmit(onSave, (errors) => {
-              console.log('validation errors:', errors)
-              toast.error('表單驗證失敗，請檢查必填欄位並修正。')
-            })}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8">
-              {/* Main Content Area */}
-              <div className="lg:col-span-3 space-y-4 sm:space-y-6 order-1">
-                {/* Title */}
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input {...field} placeholder="輸入日記標題..." />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        <form
+          id="note-form"
+          onSubmit={form.handleSubmit(onSave, (submitErrors) => {
+            console.log('validation errors:', submitErrors)
+            toast.error('表單驗證失敗，請檢查必填欄位並修正。')
+          })}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8">
+            {/* Main Content Area */}
+            <div className="lg:col-span-3 space-y-4 sm:space-y-6 order-1">
+              <FieldGroup className="space-y-4 sm:space-y-6">
+                <Field data-invalid={!!errors.title}>
+                  <Input
+                    {...form.register('title')}
+                    placeholder="輸入日記標題..."
+                    aria-invalid={!!errors.title}
+                  />
+                  <FieldError errors={[errors.title]} />
+                </Field>
 
-                {/* Content */}
-                <FormField
+                <Controller
                   control={form.control}
                   name="content"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
+                    <Field data-invalid={!!errors.content}>
+                      <FieldContent>
                         <div className="rounded-lg overflow-hidden">
                           <MonacoEditor
                             value={field.value}
@@ -280,248 +274,214 @@ const NoteEditor = ({ noteData }: { noteData?: NoteItem }) => {
                             onSave={() => form.handleSubmit(onSave)()}
                           />
                         </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                      </FieldContent>
+                      <FieldError errors={[errors.content]} />
+                    </Field>
                   )}
                 />
-              </div>
-
-              <div className="lg:col-span-1 space-y-4 sm:space-y-6 order-2">
-                {/* Mood & Weather */}
-                <Card className="border-0 shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                      <Heart className="h-4 w-4 text-primary" />
-                      心情與天氣
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="mood"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs text-muted-foreground">
-                            心情
-                          </FormLabel>
-                          <FormControl>
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="選擇心情" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {moodOptions.map((mood) => (
-                                  <SelectItem
-                                    key={mood.value}
-                                    value={mood.value}
-                                  >
-                                    {mood.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="weather"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs text-muted-foreground">
-                            天氣
-                          </FormLabel>
-                          <FormControl>
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="選擇天氣" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {weatherOptions.map((weather) => (
-                                  <SelectItem
-                                    key={weather.value}
-                                    value={weather.value}
-                                  >
-                                    {weather.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-
-                {/* Location */}
-                <Card className="border-0 shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                      <Cloud className="h-4 w-4 text-primary" />
-                      位置資訊
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="location"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs text-muted-foreground">
-                            位置描述
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="例如：台北市信義區"
-                              className="text-sm"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="coordinates"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs text-muted-foreground">
-                            座標
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="例如：25.033,121.565"
-                              className="text-sm"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-
-                {/* Settings */}
-                <Card className="border-0 shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                      <Settings className="h-4 w-4 text-primary" />
-                      日記設定
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-3 sm:space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="bookmark"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-1">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={(v) =>
-                                field.onChange(Boolean(v))
-                              }
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-sm">收藏日記</FormLabel>
-                            <p className="text-xs text-muted-foreground">
-                              標記為重要的日記
-                            </p>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="status"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-1">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={(v) =>
-                                field.onChange(Boolean(v))
-                              }
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-sm">啟用狀態</FormLabel>
-                            <p className="text-xs text-muted-foreground">
-                              是否在前台顯示
-                            </p>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-
-                {/* Topic */}
-                <Card className="border-0 shadow-sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-sm font-medium">
-                      <Book className="h-4 w-4 text-primary" />
-                      專欄設定
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="topicId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-xs text-muted-foreground">
-                            選擇專欄
-                          </FormLabel>
-                          <FormControl>
-                            <Select
-                              value={field.value ?? 'none'}
-                              onValueChange={(value) =>
-                                field.onChange(value === 'none' ? null : value)
-                              }
-                              disabled={isLoadingTopics}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="選擇專欄..." />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="none">不分類</SelectItem>
-                                {topicsData?.data?.map((topic) => (
-                                  <SelectItem key={topic.id} value={topic.id}>
-                                    {topic.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
+              </FieldGroup>
             </div>
-          </form>
-          {/* <DevTool control={form.control} /> */}
-        </Form>
+
+            <div className="lg:col-span-1 space-y-4 sm:space-y-6 order-2">
+              {/* Mood & Weather */}
+              <Card className="border-0 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                    <Heart className="h-4 w-4 text-primary" />
+                    心情與天氣
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-4">
+                  <Controller
+                    control={form.control}
+                    name="mood"
+                    render={({ field }) => (
+                      <Field data-invalid={!!errors.mood}>
+                        <FieldLabel className="text-xs text-muted-foreground">
+                          心情
+                        </FieldLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="選擇心情" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {moodOptions.map((mood) => (
+                              <SelectItem key={mood.value} value={mood.value}>
+                                {mood.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FieldError errors={[errors.mood]} />
+                      </Field>
+                    )}
+                  />
+
+                  <Controller
+                    control={form.control}
+                    name="weather"
+                    render={({ field }) => (
+                      <Field data-invalid={!!errors.weather}>
+                        <FieldLabel className="text-xs text-muted-foreground">
+                          天氣
+                        </FieldLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="選擇天氣" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {weatherOptions.map((weather) => (
+                              <SelectItem key={weather.value} value={weather.value}>
+                                {weather.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FieldError errors={[errors.weather]} />
+                      </Field>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Location */}
+              <Card className="border-0 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                    <Cloud className="h-4 w-4 text-primary" />
+                    位置資訊
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-4">
+                  <Field data-invalid={!!errors.location}>
+                    <FieldLabel className="text-xs text-muted-foreground">
+                      位置描述
+                    </FieldLabel>
+                    <Input
+                      {...form.register('location')}
+                      placeholder="例如：台北市信義區"
+                      className="text-sm"
+                      aria-invalid={!!errors.location}
+                    />
+                    <FieldError errors={[errors.location]} />
+                  </Field>
+
+                  <Field data-invalid={!!errors.coordinates}>
+                    <FieldLabel className="text-xs text-muted-foreground">
+                      座標
+                    </FieldLabel>
+                    <Input
+                      {...form.register('coordinates')}
+                      placeholder="例如：25.033,121.565"
+                      className="text-sm"
+                      aria-invalid={!!errors.coordinates}
+                    />
+                    <FieldError errors={[errors.coordinates]} />
+                  </Field>
+                </CardContent>
+              </Card>
+
+              {/* Settings */}
+              <Card className="border-0 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                    <Settings className="h-4 w-4 text-primary" />
+                    日記設定
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-3 sm:space-y-4">
+                  <Controller
+                    control={form.control}
+                    name="bookmark"
+                    render={({ field }) => (
+                      <Field orientation="horizontal">
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(v) => field.onChange(Boolean(v))}
+                        />
+                        <FieldContent>
+                          <FieldLabel className="text-sm">收藏日記</FieldLabel>
+                          <p className="text-xs text-muted-foreground">
+                            標記為重要的日記
+                          </p>
+                        </FieldContent>
+                      </Field>
+                    )}
+                  />
+
+                  <Controller
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <Field orientation="horizontal">
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(v) => field.onChange(Boolean(v))}
+                        />
+                        <FieldContent>
+                          <FieldLabel className="text-sm">啟用狀態</FieldLabel>
+                          <p className="text-xs text-muted-foreground">
+                            是否在前台顯示
+                          </p>
+                        </FieldContent>
+                      </Field>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Topic */}
+              <Card className="border-0 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                    <Book className="h-4 w-4 text-primary" />
+                    專欄設定
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-4">
+                  <Controller
+                    control={form.control}
+                    name="topicId"
+                    render={({ field }) => (
+                      <Field data-invalid={!!errors.topicId}>
+                        <FieldLabel className="text-xs text-muted-foreground">
+                          選擇專欄
+                        </FieldLabel>
+                        <Select
+                          value={field.value ?? 'none'}
+                          onValueChange={(value) =>
+                            field.onChange(value === 'none' ? null : value)
+                          }
+                          disabled={isLoadingTopics}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="選擇專欄..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">不分類</SelectItem>
+                            {topicsData?.data?.map((topic) => (
+                              <SelectItem key={topic.id} value={topic.id}>
+                                {topic.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FieldError errors={[errors.topicId]} />
+                      </Field>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </form>
+        {/* <DevTool control={form.control} /> */}
       </div>
     </>
   )

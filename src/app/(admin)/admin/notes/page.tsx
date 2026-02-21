@@ -43,12 +43,12 @@ const NotesPage = () => {
     <AdminShell
       title="日記列表"
       actions={
-        <Button asChild>
+        <Button render={
           <Link href="/admin/notes/editor">
             <Plus className="h-4 w-4 mr-2" />
             新增日記
           </Link>
-        </Button>
+        } />
       }
     >
       <div>

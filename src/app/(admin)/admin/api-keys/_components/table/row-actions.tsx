@@ -50,7 +50,7 @@ export function RowActions({ row }: RowActionsProps) {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
+      <AlertDialogTrigger render={
         <Button
           variant="ghost"
           size="sm"
@@ -59,7 +59,7 @@ export function RowActions({ row }: RowActionsProps) {
           <TrashIcon className="h-4 w-4" />
           <span className="sr-only">刪除 API 金鑰</span>
         </Button>
-      </AlertDialogTrigger>
+      } />
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>確定要刪除嗎？</AlertDialogTitle>

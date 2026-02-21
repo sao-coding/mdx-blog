@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
   DialogStack,
@@ -17,14 +17,12 @@ import {
 } from '@/components/kibo-ui/dialog-stack'
 import { Button } from '@/components/ui/button'
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { authClient } from '@/lib/auth-client'
 import { apiKeySchema } from '@/schemas/api-key'
@@ -126,59 +124,56 @@ const CreateApiKey = () => {
               {API_KEY_PREFIX}&rdquo;。
             </DialogStackDescription>
           </DialogStackHeader>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handleCreate)}
-              className="space-y-4 py-4"
-            >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>名稱 *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="例如：我的應用程式" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
+          <form
+            onSubmit={form.handleSubmit(handleCreate)}
+            className="py-4"
+          >
+            <FieldGroup className="space-y-4">
+              <Field data-invalid={!!form.formState.errors.name}>
+                <FieldLabel>
+                  名稱 <span className="text-destructive">*</span>
+                </FieldLabel>
+                <Input
+                  placeholder="例如：我的應用程式"
+                  aria-invalid={!!form.formState.errors.name}
+                  {...form.register('name')}
+                />
+                <FieldError errors={[form.formState.errors.name]} />
+              </Field>
+
+              <Controller
                 control={form.control}
                 name="expiresIn"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>過期天數</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min="1"
-                        max="365"
-                        placeholder="留空代表永不過期"
-                        value={field.value ?? ''}
-                        onChange={(e) => {
-                          const value = e.target.value
-                          field.onChange(
-                            value === '' ? null : parseInt(value) || null
-                          )
-                        }}
-                        onBlur={field.onBlur}
-                        name={field.name}
-                        ref={field.ref}
-                        disabled={field.disabled}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      API 金鑰的有效期限，最少 1 天，最多 365
-                      天。留空代表永不過期
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
+                  <Field data-invalid={!!form.formState.errors.expiresIn}>
+                    <FieldLabel>過期天數</FieldLabel>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="365"
+                      placeholder="留空代表永不過期"
+                      value={field.value ?? ''}
+                      onChange={(e) => {
+                        const value = e.target.value
+                        field.onChange(
+                          value === '' ? null : parseInt(value) || null
+                        )
+                      }}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      disabled={field.disabled}
+                      aria-invalid={!!form.formState.errors.expiresIn}
+                    />
+                    <FieldDescription>
+                      API 金鑰的有效期限，最少 1 天，最多 365 天。留空代表永不過期
+                    </FieldDescription>
+                    <FieldError errors={[form.formState.errors.expiresIn]} />
+                  </Field>
                 )}
               />
-            </form>
-          </Form>
+            </FieldGroup>
+          </form>
           <DialogStackFooter>
             <DialogStackNext asChild>
               <Button

@@ -435,7 +435,7 @@ export default function DevicesStatus() {
           className='pointer-events-auto absolute inset-y-0 left-0 z-10 flex items-center overflow-hidden'
         >
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger render={
               <div className="flex items-center justify-center size-10">
                 <AppIcon
                   windowInfo={windowInfo}
@@ -443,6 +443,7 @@ export default function DevicesStatus() {
                   appDescriptions={appDescriptions}
                 />
               </div>
+            }>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="max-w-xs">
               <WindowTooltipContent
@@ -475,10 +476,11 @@ export default function DevicesStatus() {
           className='pointer-events-auto absolute inset-y-0 left-0 z-10 flex items-center overflow-hidden'
         >
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger render={
               <div className="flex items-center justify-center size-10">
                 <MusicIcon musicInfo={musicInfo} />
               </div>
+            }>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="max-w-xs">
               <MusicTooltipContent info={musicInfo} isActive={isActive} />

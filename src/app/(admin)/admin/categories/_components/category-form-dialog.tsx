@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -17,14 +17,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
@@ -39,7 +36,7 @@ type CategoryFormData = z.infer<typeof categoryFormSchema>
 interface CategoryFormDialogProps {
   mode: 'create' | 'edit'
   category?: CategoryItem
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 export function CategoryFormDialog({
@@ -125,7 +122,8 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger render={
+        <>
         {isEditMode ? (
           children
         ) : (
@@ -134,83 +132,69 @@ export function CategoryFormDialog({
             新增分類
           </Button>
         )}
-      </DialogTrigger>
+        </>
+      } />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>名稱</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="例如：前端技術" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>網址別名 (Slug)</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="例如：frontend" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>描述</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder="關於這個分類的簡短描述..."
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="color"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>顏色</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="color" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setIsOpen(false)}
-              >
-                取消
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? submittingButtonText : submitButtonText}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FieldGroup className="space-y-4">
+            <Field data-invalid={!!form.formState.errors.name}>
+              <FieldLabel>名稱</FieldLabel>
+              <Input
+                {...form.register('name')}
+                placeholder="例如：前端技術"
+                aria-invalid={!!form.formState.errors.name}
+              />
+              <FieldError errors={[form.formState.errors.name]} />
+            </Field>
+
+            <Field data-invalid={!!form.formState.errors.slug}>
+              <FieldLabel>網址別名 (Slug)</FieldLabel>
+              <Input
+                {...form.register('slug')}
+                placeholder="例如：frontend"
+                aria-invalid={!!form.formState.errors.slug}
+              />
+              <FieldError errors={[form.formState.errors.slug]} />
+            </Field>
+
+            <Field data-invalid={!!form.formState.errors.description}>
+              <FieldLabel>描述</FieldLabel>
+              <Textarea
+                {...form.register('description')}
+                placeholder="關於這個分類的簡短描述..."
+                aria-invalid={!!form.formState.errors.description}
+              />
+              <FieldError errors={[form.formState.errors.description]} />
+            </Field>
+
+            <Field data-invalid={!!form.formState.errors.color}>
+              <FieldLabel>顏色</FieldLabel>
+              <Input
+                {...form.register('color')}
+                type="color"
+                aria-invalid={!!form.formState.errors.color}
+              />
+              <FieldError errors={[form.formState.errors.color]} />
+            </Field>
+          </FieldGroup>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsOpen(false)}
+            >
+              取消
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? submittingButtonText : submitButtonText}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )

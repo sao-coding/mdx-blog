@@ -71,7 +71,7 @@ export function RowActions({ row }: RowActionsProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger render={
           <Button
             variant="ghost"
             className="flex size-8 p-0 data-[state=open]:bg-muted"
@@ -79,7 +79,7 @@ export function RowActions({ row }: RowActionsProps) {
             <MoreHorizontal className="size-4" />
             <span className="sr-only">開啟選單</span>
           </Button>
-        </DropdownMenuTrigger>
+        } />
         <DropdownMenuContent align="end" className="w-[160px]">
           <DropdownMenuLabel>更多操作</DropdownMenuLabel>
           <DropdownMenuItem
@@ -88,20 +88,20 @@ export function RowActions({ row }: RowActionsProps) {
             複製日記 ID
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
+          <DropdownMenuItem render={
             <Link href={`/admin/notes/editor/${note.id}`}>編輯日記</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
+          } />
+          <DropdownMenuItem render={
             <Link href={`/notes/${note.id}`} target="_blank">
               查看日記
             </Link>
-          </DropdownMenuItem>
+          } />
           <DropdownMenuSeparator />
-          <AlertDialogTrigger asChild>
+          <AlertDialogTrigger render={
             <DropdownMenuItem className="text-destructive focus:text-destructive">
               刪除日記
             </DropdownMenuItem>
-          </AlertDialogTrigger>
+          } />
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialogContent>

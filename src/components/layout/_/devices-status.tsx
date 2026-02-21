@@ -95,7 +95,7 @@ const DevicesStatus = () => {
         style={{ width: isExpanded ? '140px' : '48px', height: '48px' }}
       >
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger render={
             <div
               className={`absolute cursor-pointer p-2 bg-background border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 ${
                 isExpanded
@@ -109,7 +109,9 @@ const DevicesStatus = () => {
               }}
             >
               <ConnectionIcon className={`h-5 w-5 ${statusColor}`} />
-            </div>
+            </div>            
+          }>
+
           </TooltipTrigger>
           <TooltipContent>
             <div className="space-y-1">
@@ -129,7 +131,8 @@ const DevicesStatus = () => {
         </Tooltip>
 
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger render={
+            
             <div
               className={`absolute cursor-pointer p-2 bg-background border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 ${
                 isExpanded ? 'opacity-100' : 'opacity-80'
@@ -146,6 +149,7 @@ const DevicesStatus = () => {
                 }`}
               />
             </div>
+          }>
           </TooltipTrigger>
           <TooltipContent>
             <div className="space-y-1">
@@ -159,7 +163,7 @@ const DevicesStatus = () => {
         </Tooltip>
 
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger render={
             <div
               className={`absolute cursor-pointer p-2 bg-background border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 ${
                 isExpanded ? 'opacity-100' : 'opacity-60'
@@ -176,6 +180,7 @@ const DevicesStatus = () => {
                 }`}
               />
             </div>
+          }>
           </TooltipTrigger>
           <TooltipContent>
             <div className="space-y-1">

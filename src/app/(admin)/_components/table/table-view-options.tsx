@@ -1,16 +1,18 @@
 "use client";
 
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+// import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Table } from "@tanstack/react-table";
 import { Settings2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 
 export function DataTableViewOptions<TData>({
@@ -20,7 +22,7 @@ export function DataTableViewOptions<TData>({
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger render={
         <Button
           variant="outline"
           size="sm"
@@ -29,8 +31,9 @@ export function DataTableViewOptions<TData>({
           <Settings2 />
           顯示
         </Button>
-      </DropdownMenuTrigger>
+      } />
       <DropdownMenuContent align="end" className="w-[150px]">
+        <DropdownMenuGroup>
         <DropdownMenuLabel>切換欄位</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
@@ -51,6 +54,7 @@ export function DataTableViewOptions<TData>({
               </DropdownMenuCheckboxItem>
             );
           })}
+          </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -29,7 +29,7 @@ export function DataTableColumnHeader<TData, TValue>({
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger render={
           <Button
             variant="ghost"
             size="sm"
@@ -44,7 +44,7 @@ export function DataTableColumnHeader<TData, TValue>({
               <ChevronsUpDown />
             )}
           </Button>
-        </DropdownMenuTrigger>
+        }/>
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
             <ArrowUp />

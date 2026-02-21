@@ -39,7 +39,7 @@ export function NavUser({ user }: { user: User }) {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger render={
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
@@ -54,7 +54,7 @@ export function NavUser({ user }: { user: User }) {
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
-          </DropdownMenuTrigger>
+          } />
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             side={isMobile ? 'bottom' : 'right'}
@@ -75,12 +75,12 @@ export function NavUser({ user }: { user: User }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem render={
                 <Link href="/">
                   <HomeIcon />
                   Blog 首頁
                 </Link>
-              </DropdownMenuItem>
+              } />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>

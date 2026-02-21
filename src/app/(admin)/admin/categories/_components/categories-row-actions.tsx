@@ -71,7 +71,7 @@ export function CategoriesRowActions({ row }: CategoriesRowActionsProps) {
   return (
     <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger render={
           <Button
             variant="ghost"
             className="flex size-8 p-0 data-[state=open]:bg-muted"
@@ -79,7 +79,7 @@ export function CategoriesRowActions({ row }: CategoriesRowActionsProps) {
             <MoreHorizontalIcon className="size-4" />
             <span className="sr-only">開啟選單</span>
           </Button>
-        </DropdownMenuTrigger>
+        } />
         <DropdownMenuContent align="end" className="w-[160px]">
           <DropdownMenuLabel>更多操作</DropdownMenuLabel>
           <DropdownMenuItem
@@ -98,17 +98,17 @@ export function CategoriesRowActions({ row }: CategoriesRowActionsProps) {
               編輯分類
             </DropdownMenuItem>
           </CategoryFormDialog>
-          <DropdownMenuItem asChild>
+          <DropdownMenuItem render={
             <Link href={`/categories/${category.slug}`} target="_blank">
               查看分類
             </Link>
-          </DropdownMenuItem>
+          } />
           <DropdownMenuSeparator />
-          <AlertDialogTrigger asChild>
+          <AlertDialogTrigger render={
             <DropdownMenuItem className="text-destructive focus:text-destructive">
               刪除分類
             </DropdownMenuItem>
-          </AlertDialogTrigger>
+            } />
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialogContent>
