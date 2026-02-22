@@ -113,6 +113,10 @@ export function CategoryFormDialog({
     }
   }
 
+  useEffect(() => {
+    console.log('CategoryFormDialog props changed:', { mode, category ,isEditMode, open: isOpen})
+  }, [isOpen])
+
   const title = isEditMode ? '編輯分類' : '新增分類'
   const description = isEditMode
     ? '修改以下資訊以更新分類。'
@@ -122,8 +126,8 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger render={
-        <>
+      <DialogTrigger nativeButton={false} render={(props) => (
+    <div {...props}>
         {isEditMode ? (
           children
         ) : (
@@ -132,7 +136,7 @@ export function CategoryFormDialog({
             新增分類
           </Button>
         )}
-        </>
+        </div>)
       } />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

@@ -14,6 +14,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -79,6 +80,7 @@ export function TopicsRowActions({ row }: TopicsRowActionsProps) {
           </Button>
         } />
         <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuGroup>
           <DropdownMenuLabel>更多操作</DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() => navigator.clipboard.writeText(topic.id)}
@@ -102,11 +104,12 @@ export function TopicsRowActions({ row }: TopicsRowActionsProps) {
             </Link>
           } />
           <DropdownMenuSeparator />
-          <AlertDialogTrigger render={
+          <AlertDialogTrigger nativeButton={false} render={
             <DropdownMenuItem className="text-destructive focus:text-destructive">
               刪除專欄
             </DropdownMenuItem>
           } />
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialogContent>

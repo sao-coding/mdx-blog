@@ -50,7 +50,7 @@ export function RowActions({ row }: RowActionsProps) {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger render={
+      <AlertDialogTrigger nativeButton={false} render={
         <Button
           variant="ghost"
           size="sm"

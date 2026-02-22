@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -81,6 +82,7 @@ export function RowActions({ row }: RowActionsProps) {
           </Button>
         } />
         <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuGroup>
           <DropdownMenuLabel>更多操作</DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() => navigator.clipboard.writeText(note.id)}
@@ -97,11 +99,11 @@ export function RowActions({ row }: RowActionsProps) {
             </Link>
           } />
           <DropdownMenuSeparator />
-          <AlertDialogTrigger render={
+          <AlertDialogTrigger nativeButton={false} render={
             <DropdownMenuItem className="text-destructive focus:text-destructive">
               刪除日記
             </DropdownMenuItem>
-          } />
+          } /></DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialogContent>
