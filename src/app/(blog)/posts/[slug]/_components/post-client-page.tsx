@@ -58,7 +58,7 @@ export function PostClientPage({
           {!isMobile && showToc && <TableOfContent toc={toc} targetRef={targetRef} />}
         </div>
       </div>
-      <BackToTopFAB />
+      {isMobile && <BackToTopFAB />}
     </div>
   )
 }

@@ -8,7 +8,6 @@ import TableOfContent from '@/components/toc'
 import { NoteItem } from '@/types/note'
 import { TocItem } from '@/types/toc'
 import { useHeaderStore } from '@/store/header-store'
-import { BackToTopFAB } from '@/components/fab'
 import { CommentSection } from '@/components/comment'
 
 interface NoteClientPageProps {
@@ -68,8 +67,6 @@ export function NoteClientPage({ note, toc, children }: NoteClientPageProps) {
       <div className="relative hidden min-w-0 xl:block mt-[120px]">
         <TableOfContent toc={toc} targetRef={targetRef} />
       </div>
-
-      <BackToTopFAB />
     </>
   )
 }

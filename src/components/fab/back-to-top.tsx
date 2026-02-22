@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUp } from 'lucide-react'
+import { ArrowUpIcon } from 'lucide-react'
 import {
   usePageScrollLocationSelector,
   useViewportSelector,
@@ -25,7 +25,7 @@ export const BackToTopFAB = () => {
       show={shouldShow}
       aria-label="回到頂部"
     >
-      <ArrowUp className="size-5" />
+      <ArrowUpIcon className="size-5"/>
     </FABPortable>
   )
 }

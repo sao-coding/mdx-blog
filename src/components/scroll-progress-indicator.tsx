@@ -2,6 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { motion, useScroll, useSpring, useTransform } from 'motion/react'
+import {
+  usePageScrollLocationSelector,
+  useViewportSelector,
+  springScrollToTop,
+} from '@/hooks/use-page-scroll'
+import { ArrowUpIcon } from 'lucide-react'
 
 interface ScrollProgressIndicatorProps {
   target: React.RefObject<HTMLElement | null>
@@ -35,6 +41,11 @@ export function ScrollProgressIndicator({
     [circumference, 0]
   )
 
+  const windowHeight = useViewportSelector((v) => v.h)
+  const shouldShow = usePageScrollLocationSelector(
+    (scrollTop) => scrollTop > windowHeight / 5,
+  )
+
   // 更新百分比顯示
   useEffect(() => {
     const unsubscribe = smoothProgress.on('change', (latest) => {
@@ -42,6 +53,8 @@ export function ScrollProgressIndicator({
     })
     return unsubscribe
   }, [smoothProgress])
+
+  
 
   return (
     <div className="">
@@ -88,6 +101,17 @@ export function ScrollProgressIndicator({
           {percentage}%
         </span>
       </div>
+      {/* 回到頂部 當頁面滾動超過視窗高度 1/5 時顯示，點擊後平滑滾動回頂部。 */}
+      <motion.button
+        className="group text-sm text-muted-foreground hover:text-orange-500 transition-colors flex items-center gap-2"
+        onClick={() => springScrollToTop()}
+        initial={{ opacity: 0, y: 10 }}
+        animate={shouldShow ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+        transition={{ duration: 0.3 }}
+      >
+        <ArrowUpIcon className="size-4 border rounded-full m-0.5 group-hover:border-primary"/>
+        <span className='mt-0.5'>回到頂部</span>
+      </motion.button>
     </div>
   )
 }

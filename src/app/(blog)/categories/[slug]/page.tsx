@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ApiResponse } from '@/types/api'
 import { PostItem } from '@/types/post'
 import Link from 'next/link'
+import { BackToTopFAB } from '@/components/fab'
 
 const CategoriesPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = use(params)
@@ -65,6 +66,7 @@ const CategoriesPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           </div>
         </div>
       )}
+      <BackToTopFAB />
     </>
   )
 }
